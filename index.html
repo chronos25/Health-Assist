@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Assist · Virtual Physician</title>
+<style>
+:root{--bg:#f4f7f5;--card:#fff;--ink:#1b2a25;--mute:#5b6b65;--line:#dbe4df;--brand:#1f7a5c;--soft:#e8f3ee;--hi:#b4432b;--lo:#1f5fa8;--ok:#1f7a5c;--warn:#fff3dc;--warnink:#7a4f00;--em:#fdecea}
+@media(prefers-color-scheme:dark){:root{--bg:#111815;--card:#19231f;--ink:#e8f0ec;--mute:#93a59d;--line:#2b3a34;--brand:#3fb68d;--soft:#20302a;--hi:#f08a70;--lo:#7db3f2;--ok:#5fd0a5;--warn:#33290f;--warnink:#f0c86a;--em:#3a1e1a}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",Roboto,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:16px 14px 60px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.logo{width:46px;height:46px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:26px}
+h1{font-size:1.3rem;margin:0;line-height:1.2}header p{margin:0;color:var(--mute);font-size:.9rem}
+.sp{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:.95rem;color:var(--ink);background:var(--card)}
+.seg button[aria-pressed=true]{background:var(--brand);color:#fff}
+.note{background:var(--warn);color:var(--warnink);border-radius:10px;padding:10px 14px;font-size:.9rem;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:11px 8px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600}
+.tabs button[aria-selected=true]{background:var(--brand);color:#fff;border-color:var(--brand)}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:860px){.grid{grid-template-columns:5fr 6fr;align-items:start}}
+h2{font-size:1.05rem;margin:0 0 10px}h3{font-size:1rem;margin:14px 0 4px;color:var(--brand)}
+label{display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px}
+textarea,input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+textarea{min-height:200px;resize:vertical}
+textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.btn{font:inherit;border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:600}
+.btn.s{background:transparent;color:var(--brand)}.btn:disabled{opacity:.5}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:.92rem}.tw{overflow-x:auto}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mute)}
+.pill{font-weight:700;font-size:.78rem;padding:2px 9px;border-radius:999px;background:var(--soft)}
+.HIGH,.CRITICAL_HIGH,.CRITICAL_LOW{color:var(--hi)}.LOW{color:var(--lo)}.NORMAL{color:var(--ok)}
+.em{background:var(--em);border:2px solid var(--hi);border-radius:14px;padding:14px 18px;margin-bottom:14px}
+.em h2{color:var(--hi)}
+.say{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:1.05rem}
+details{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0}
+summary{cursor:pointer;font-weight:600}
+li{margin:3px 0}.mute{color:var(--mute);font-size:.85rem}
+.empty{color:var(--mute);text-align:center;padding:30px 10px}
+.set{font-size:.9rem}.set summary{font-weight:500;color:var(--mute)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:#999}.dot.on{background:var(--ok)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:.9rem;z-index:9;max-width:92%}
+@media print{body{background:#fff;color:#000}header .seg,.tabs,#inputCol,.btns,.set,.note,#sympInput{display:none!important}.card{border:none}.grid{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true">🩺</div>
+    <div><h1 id="t_title">Virtual Physician</h1><p id="t_sub">Understand your report and your health. Works offline.</p></div>
+    <span class="sp"></span>
+    <div class="seg" role="group" aria-label="Language">
+      <button data-lang="English" aria-pressed="true">English</button>
+      <button data-lang="हिन्दी" aria-pressed="false">हिन्दी</button>
+      <button data-lang="Hinglish" aria-pressed="false">Hinglish</button>
+    </div>
+  </header>
+  <div class="note" id="disc"></div>
+
+  <div class="card set"><details>
+    <summary><span id="odot" class="dot"></span><span id="t_set">Settings: age, sex, optional local AI (Ollama)</span></summary>
+    <div class="row">
+      <div><label for="age">Age / उम्र</label><input id="age" type="number" min="0" max="120" inputmode="numeric" placeholder="e.g. 40"></div>
+      <div><label for="sex">Sex / लिंग</label><select id="sex"><option value="unknown">-</option><option value="female">Female / महिला</option><option value="male">Male / पुरुष</option></select></div>
+    </div>
+    <div class="row">
+      <div><label for="host">Ollama address</label><input id="host" value="http://localhost:11434"></div>
+      <div><label for="model">Model</label><select id="model"><option value="">(none: built-in summary)</option></select></div>
+    </div>
+    <div class="btns"><button class="btn s" id="conn" type="button">Connect to Ollama</button></div>
+    <p class="mute" id="ostat">Optional. Without it you still get results, flags, guidance and audio. With it, the summary is written more naturally.
+      Start Ollama with <code>OLLAMA_ORIGINS=*</code> so this page may talk to it.</p>
+  </details></div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab1" aria-selected="true">📄 <span id="t_tab1">My lab report</span></button>
+    <button role="tab" id="tab2" aria-selected="false">🤒 <span id="t_tab2">My problem</span></button>
+  </div>
+
+  <div id="emBox"></div>
+
+  <section id="p1" class="grid">
+    <div class="card" id="inputCol">
+      <h2 id="t_in1">1 · Add your report</h2>
+      <label for="file" id="t_file">Text file or text PDF (optional)</label>
+      <input type="file" id="file" accept=".txt,.pdf,text/plain,application/pdf">
+      <label for="rep" id="t_paste">…or paste the report text</label>
+      <textarea id="rep" placeholder="Hemoglobin 11.2 gm%&#10;Fasting Blood Sugar 126 mg/dL&#10;Platelet Count 1.5 lakh/cumm"></textarea>
+      <div class="btns"><button class="btn" id="go1"><span id="t_go1">Understand my report</span></button>
+        <button class="btn s" id="demo" type="button"><span id="t_demo">Try a sample</span></button></div>
+      <p class="mute" id="t_priv">Everything stays in this browser. Names and ID numbers in the text are ignored.</p>
+    </div>
+    <div class="card"><h2 id="t_out1">2 · Your results</h2><div id="out1"><div class="empty" id="t_empty1">Paste your report and press the green button.</div></div></div>
+  </section>
+
+  <section id="p2" hidden class="grid">
+    <div class="card" id="sympInput">
+      <h2 id="t_in2">Tell me what is troubling you</h2>
+      <textarea id="sym" style="min-height:140px" placeholder="e.g. mujhe 2 din se acidity aur sir dard hai"></textarea>
+      <div class="btns"><button class="btn" id="go2"><span id="t_go2">Get advice</span></button></div>
+      <p class="mute" id="t_ex">Write in English, Hindi or Hinglish. For mild problems only.</p>
+    </div>
+    <div class="card"><h2 id="t_out2">Advice</h2><div id="out2"><div class="empty" id="t_empty2">Describe your problem and press the green button.</div></div></div>
+  </section>
+
+  <p class="mute">Emergency 112 · Ambulance 108 · Mental health Tele-MANAS 14416 (free, 24x7)</p>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script>
+const D = {"REF": {"hemoglobin": ["g/dL", 13.5, 17.5, 12.0, 15.5, 7.0, 20.0], "hematocrit": ["%", 41, 53, 36, 46, 20, 60], "wbc": ["10^3/uL", 4.5, 11.0, 4.5, 11.0, 2.0, 30.0], "platelets": ["10^3/uL", 150, 450, 150, 450, 50, 1000], "glucose_fasting": ["mg/dL", 70, 99, 70, 99, 50, 400], "hba1c": ["%", 4.0, 5.6, 4.0, 5.6, null, 14.0], "total_cholesterol": ["mg/dL", 0, 199, 0, 199, null, null], "ldl": ["mg/dL", 0, 99, 0, 99, null, null], "hdl": ["mg/dL", 40, 100, 50, 100, null, null], "triglycerides": ["mg/dL", 0, 149, 0, 149, null, 1000], "creatinine": ["mg/dL", 0.74, 1.35, 0.59, 1.04, null, 7.0], "bun": ["mg/dL", 6, 24, 6, 24, null, 100], "sodium": ["mmol/L", 135, 145, 135, 145, 120, 160], "potassium": ["mmol/L", 3.5, 5.0, 3.5, 5.0, 3.0, 6.0], "calcium": ["mg/dL", 8.6, 10.3, 8.6, 10.3, 6.5, 13.0], "alt": ["U/L", 7, 55, 7, 45, null, 1000], "ast": ["U/L", 8, 48, 8, 43, null, 1000], "bilirubin_total": ["mg/dL", 0.1, 1.2, 0.1, 1.2, null, 15.0], "tsh": ["mIU/L", 0.4, 4.0, 0.4, 4.0, 0.01, 50.0], "vitamin_d": ["ng/mL", 30, 100, 30, 100, null, null], "vitamin_b12": ["pg/mL", 200, 900, 200, 900, null, null], "ferritin": ["ng/mL", 24, 336, 11, 307, null, null], "crp": ["mg/L", 0, 3.0, 0, 3.0, null, null]}, "NAMES": {"hemoglobin": "hemoglobin", "hematocrit": "hematocrit", "wbc": "wbc", "platelets": "platelets", "glucose fasting": "glucose_fasting", "hba1c": "hba1c", "total cholesterol": "total_cholesterol", "ldl": "ldl", "hdl": "hdl", "triglycerides": "triglycerides", "creatinine": "creatinine", "bun": "bun", "sodium": "sodium", "potassium": "potassium", "calcium": "calcium", "alt": "alt", "ast": "ast", "bilirubin total": "bilirubin_total", "tsh": "tsh", "vitamin d": "vitamin_d", "vitamin b12": "vitamin_b12", "ferritin": "ferritin", "crp": "crp", "hb": "hemoglobin", "haemoglobin": "hemoglobin", "hgb": "hemoglobin", "hct": "hematocrit", "pcv": "hematocrit", "white blood cells": "wbc", "tlc": "wbc", "leukocytes": "wbc", "plt": "platelets", "platelet count": "platelets", "fbs": "glucose_fasting", "fasting glucose": "glucose_fasting", "fasting blood sugar": "glucose_fasting", "glucose": "glucose_fasting", "a1c": "hba1c", "glycated hemoglobin": "hba1c", "cholesterol": "total_cholesterol", "ldl cholesterol": "ldl", "ldl-c": "ldl", "hdl cholesterol": "hdl", "hdl-c": "hdl", "tg": "triglycerides", "serum creatinine": "creatinine", "urea nitrogen": "bun", "blood urea nitrogen": "bun", "sgpt": "alt", "sgot": "ast", "total bilirubin": "bilirubin_total", "thyroid stimulating hormone": "tsh", "25-oh vitamin d": "vitamin_d", "b12": "vitamin_b12", "c-reactive protein": "crp", "haemoglobin (hb)": "hemoglobin", "s. creatinine": "creatinine", "serum glucose": "glucose_fasting", "vit d": "vitamin_d", "vit b12": "vitamin_b12", "triglyceride": "triglycerides", "platelet": "platelets", "total leucocyte count": "wbc", "rbs": "_skip", "ppbs": "_skip", "random glucose": "_skip", "post prandial": "_skip", "pp glucose": "_skip"}, "CONV": {"glucose_fasting|mmol/l": 18.016, "total_cholesterol|mmol/l": 38.67, "ldl|mmol/l": 38.67, "hdl|mmol/l": 38.67, "triglycerides|mmol/l": 88.57, "creatinine|umol/l": 0.011312217194570135, "bilirubin_total|umol/l": 0.05847953216374269, "calcium|mmol/l": 4.008, "bun|mmol/l": 2.801, "vitamin_d|nmol/l": 0.40064102564102566, "vitamin_b12|pmol/l": 1.355, "ferritin|ug/l": 1.0, "hemoglobin|g/l": 0.1}, "SAME": {"gm%": "g/dl", "g%": "g/dl", "gm/dl": "g/dl", "g/dl": "g/dl", "mg%": "mg/dl", "mg/dl": "mg/dl", "iu/l": "u/l", "u/l": "u/l", "miu/l": "miu/l", "uiu/ml": "miu/l", "uiu/l": "miu/l", "ng/ml": "ng/ml", "pg/ml": "pg/ml", "mmol/l": "mmol/l", "meq/l": "mmol/l", "%": "%", "mg/l": "mg/l"}, "RED": [["Possible heart attack", ["chest (pain|pressure|tightness)", "pain.{0,20}(left arm|jaw)", "seene? (me|mein|main) (dard|jalan|bhaari)", "सीने (में|मे) (दर्द|भारीपन|जकड़न)", "छाती (में|मे) दर्द"]], ["Possible stroke", ["face (droop|drooping)", "(slurred|slurring) speech", "sudden (weakness|numbness)", "(one|half) side.{0,15}(weak|numb|paraly)", "lakwa", "लकवा", "मुंह (टेढ़ा|टेड़ा)", "बोलने (में|मे) (दिक्कत|परेशानी)", "sudden.{0,15}(vision loss|cannot see|blind)", "worst headache"]], ["Breathing emergency", ["(can'?t|cannot|unable to) breathe", "severe (breathlessness|shortness of breath)", "saans (nahi|lene me|lene mein).{0,20}(dikkat|takleef|aa)", "सांस (नहीं|लेने में).{0,15}(दिक्कत|तकलीफ|आ)", "blue (lips|face)", "gasping"]], ["Severe bleeding or vomiting blood", ["vomit(ing)? blood", "blood in (vomit|stool)", "black (tarry )?stool", "coughing (up )?blood", "heavy bleeding", "khoon (ki ulti|aa raha|beh raha)", "खून (की उल्टी|आ रहा|बह रहा)", "काला मल"]], ["Loss of consciousness or seizure", ["unconscious", "fainted", "passed out", "seizure", "convulsion", "fits?\\b", "behosh", "बेहोश", "दौरा", "मिर्गी"]], ["Self-harm or suicidal thoughts", ["suicid", "kill myself", "end my life", "want to die", "self[- ]harm", "jaan dena", "mar jana chahta", "mar jaana chahti", "आत्महत्या", "मरना चाहता", "मरना चाहती"]], ["Poisoning or overdose", ["poison", "overdose", "swallowed .{0,20}(pesticide|phenyl|tablets|acid)", "zeher", "जहर", "कीटनाशक"]], ["Severe allergic reaction", ["throat (swelling|closing)", "swelling of (lips|face|tongue)", "anaphyla"]], ["High fever danger signs", ["fever.{0,40}(stiff neck|confus|rash|seizure|not waking)", "stiff neck", "baby.{0,25}(fever|not feeding)", "infant.{0,25}fever"]], ["Pregnancy emergency", ["pregnan.{0,40}(bleeding|severe (pain|headache)|no (baby )?movement|fits)", "garbh.{0,30}(khoon|dard)", "गर्भ.{0,20}(खून|दर्द)"]], ["Severe abdominal pain", ["severe (abdominal|stomach|belly) pain", "rigid (abdomen|belly)", "pet (me|mein) (tez|bahut) dard"]]], "LAB": {"hemoglobin:LOW": {"title": "Low haemoglobin (possible anaemia)", "food": ["Iron-rich Indian foods: ragi, bajra, rajma, chana, masoor dal, palak, methi, beetroot, jaggery (gud) in small amount, dates, sesame (til), garden cress seeds (halim)", "Add vitamin C with meals (nimbu, amla, orange, guava) to help iron absorb", "Avoid chai/coffee within 1 hour of meals; they block iron absorption", "Non-vegetarians: eggs, chicken liver, fish help"], "yoga": ["Gentle walking, Anulom-Vilom (slow breathing), Tadasana. Avoid heavy exercise if dizzy"], "ayush": ["Cooking in a cast-iron kadhai can add a little iron to food"], "doctor": "Ask whether iron, B12 and ferritin should be tested and what is causing it (diet, periods, worms, bleeding). Do not self-start iron tablets in large doses."}, "glucose_fasting:HIGH": {"title": "High blood sugar (pre-diabetes or diabetes range)", "food": ["Swap white rice/maida for millets (jowar, bajra, ragi), brown rice, whole-wheat or besan rotis; keep rice portion to about half a katori", "Fill half the plate with sabzi/salad, add dal or sprouts for protein", "Avoid sugary chai, cold drinks, packaged juice, sweets, bakery snacks; fruit whole, not juiced", "Eat on time; do not skip meals if you take sugar medicine"], "yoga": ["Brisk 30-minute walk daily (especially 10-15 min after meals)", "Surya Namaskar, Ardha Matsyendrasana, Vajrasana after meals, Pranayama (Anulom-Vilom)"], "ayush": ["Methi (fenugreek) seeds in food and cinnamon (dalchini) in cooking are traditional; use only as food-amounts"], "doctor": "Ask about an HbA1c or repeat fasting test. If you already take sugar medicine, do NOT add karela/jamun/herbal juices or powders without asking your doctor; they can drop sugar too low."}, "hba1c:HIGH": {"title": "High HbA1c (average sugar over 3 months)", "food": ["Same plate approach as for high sugar: millets, dal, vegetables, controlled rice/roti portions", "Cut sugar, sweets, refined flour and fried snacks"], "yoga": ["Daily walking 30-45 minutes; Surya Namaskar and Pranayama if comfortable"], "ayush": [], "doctor": "Ask whether this needs medicine or only lifestyle change, and about eye, kidney and foot checks."}, "total_cholesterol:HIGH": {"title": "High cholesterol", "food": ["Use less oil; prefer mustard/groundnut/rice-bran oil in small amounts; avoid vanaspati/dalda and reused frying oil", "Oats, dalia, barley, soaked chana, vegetables, fruits, flax seed (alsi), a handful of walnuts/almonds", "Limit ghee/butter, fried samosa/pakora/puri, bakery items, red meat, organ meats"], "yoga": ["Brisk walking 30-45 minutes, Surya Namaskar, Kapalbhati only if you have no heart/BP problems"], "ayush": ["Garlic (lehsun) and amla as part of normal meals are traditional"], "doctor": "Ask about your overall heart risk and whether a statin is advisable. Do not stop medicines because of a herbal remedy."}, "ldl:HIGH": {"title": "High cholesterol", "food": ["Use less oil; prefer mustard/groundnut/rice-bran oil in small amounts; avoid vanaspati/dalda and reused frying oil", "Oats, dalia, barley, soaked chana, vegetables, fruits, flax seed (alsi), a handful of walnuts/almonds", "Limit ghee/butter, fried samosa/pakora/puri, bakery items, red meat, organ meats"], "yoga": ["Brisk walking 30-45 minutes, Surya Namaskar, Kapalbhati only if you have no heart/BP problems"], "ayush": ["Garlic (lehsun) and amla as part of normal meals are traditional"], "doctor": "Ask about your overall heart risk and whether a statin is advisable. Do not stop medicines because of a herbal remedy."}, "triglycerides:HIGH": {"title": "High triglycerides", "food": ["Strongly cut sugar, sweets, sugary drinks, refined flour, alcohol and fried foods", "More fibre: vegetables, whole grains, dal; fish or flax/walnuts for healthy fats"], "yoga": ["Daily brisk walking, cycling or swimming"], "ayush": [], "doctor": "Ask about checking sugar and thyroid; very high levels need medical treatment."}, "vitamin_d:LOW": {"title": "Low vitamin D (very common in India)", "food": ["Safe morning sunlight on arms and legs about 15-20 minutes (before 10-11 am)", "Milk, curd, paneer, eggs, fatty fish, fortified milk/oil where available"], "yoga": ["Do Surya Namaskar outdoors in morning sun; weight-bearing walking"], "ayush": [], "doctor": "Ask which vitamin D dose and duration is right for you, and whether calcium is needed. Do not take high-dose weekly capsules unsupervised for long."}, "vitamin_b12:LOW": {"title": "Low vitamin B12 (common in vegetarians)", "food": ["Milk, curd, paneer, eggs, fish, fortified foods. Plant foods alone have almost no B12"], "yoga": ["Gentle walking and Pranayama; rest if you feel dizzy or tingling"], "ayush": [], "doctor": "Tingling, numbness, memory or balance problems with low B12 need prompt medical review. Ask about tablets vs injections."}, "tsh:HIGH": {"title": "High TSH (thyroid may be underactive)", "food": ["Iodised salt in normal amounts; balanced diet; adequate protein", "Take thyroid medicine, if prescribed, on an empty stomach with water and wait 30-60 minutes before tea/food"], "yoga": ["Sarvangasana and Matsyasana are traditionally suggested; do only if no neck problems", "Gentle walking, Ujjayi/Anulom-Vilom breathing"], "ayush": ["Avoid ashwagandha/kelp/iodine supplements unless your doctor says so; they can disturb thyroid tests"], "doctor": "Ask about T3/T4, repeat testing in 6-8 weeks and whether treatment is needed."}, "tsh:LOW": {"title": "Low TSH (thyroid may be overactive)", "food": ["Regular balanced meals; avoid excess iodine supplements"], "yoga": ["Gentle Pranayama and relaxation; avoid intense exertion if palpitations"], "ayush": ["Avoid herbal thyroid supplements"], "doctor": "Ask for T3/T4 and about palpitations, weight loss, tremor. Needs medical assessment."}, "alt:HIGH": {"title": "Raised liver enzymes (SGPT/SGOT)", "food": ["Avoid alcohol completely until reviewed", "Reduce fried/oily food, sweets and sugary drinks; more vegetables, fruits, dal", "Avoid unnecessary painkillers and herbal/ayurvedic powders or kushta bhasma of unknown source"], "yoga": ["Walking 30 minutes, Pranayama, Bhujangasana if comfortable"], "ayush": ["Do not self-start herbal liver tonics; some herbal products themselves harm the liver"], "doctor": "Ask about ultrasound, hepatitis B/C testing, fatty liver and a review of all medicines/supplements you take."}, "creatinine:HIGH": {"title": "High creatinine (kidney function may be reduced)", "food": ["Drink water as your doctor advises; do not force extra water if you have swelling or heart disease", "Cut salt (namak), pickles, papad, namkeen, packaged food", "Do not take painkillers like diclofenac/ibuprofen regularly"], "yoga": ["Gentle walking and Pranayama; avoid intense exercise until reviewed"], "ayush": ["Avoid ALL herbal/ayurvedic powders, bhasma and supplements. Some contain metals or potassium harmful to kidneys"], "doctor": "Ask for repeat creatinine/eGFR, urine protein, BP and sugar control, and whether you need a kidney specialist."}, "platelets:LOW": {"title": "Low platelet count", "food": ["Plenty of fluids (ORS, coconut water, dal water, soups) and normal nutritious food"], "yoga": ["Rest; avoid contact activities or heavy exercise"], "ayush": [], "doctor": "Low platelets with fever, rash, bleeding or severe weakness needs same-day medical care (dengue, infections). Do not take aspirin or ibuprofen. Papaya-leaf and other remedies are not proven; do not delay care for them."}, "hdl:LOW": {"title": "Low HDL (good cholesterol)", "food": ["Healthy fats: nuts, seeds, fish; cut sugar, maida and fried food"], "yoga": ["Regular aerobic exercise (brisk walking, cycling) is the best way to raise HDL", "Quit tobacco"], "ayush": [], "doctor": "Ask about your overall heart risk."}, "ferritin:LOW": {"title": "Low haemoglobin (possible anaemia)", "food": ["Iron-rich Indian foods: ragi, bajra, rajma, chana, masoor dal, palak, methi, beetroot, jaggery (gud) in small amount, dates, sesame (til), garden cress seeds (halim)", "Add vitamin C with meals (nimbu, amla, orange, guava) to help iron absorb", "Avoid chai/coffee within 1 hour of meals; they block iron absorption", "Non-vegetarians: eggs, chicken liver, fish help"], "yoga": ["Gentle walking, Anulom-Vilom (slow breathing), Tadasana. Avoid heavy exercise if dizzy"], "ayush": ["Cooking in a cast-iron kadhai can add a little iron to food"], "doctor": "Ask whether iron, B12 and ferritin should be tested and what is causing it (diet, periods, worms, bleeding). Do not self-start iron tablets in large doses."}, "hematocrit:LOW": {"title": "Low haemoglobin (possible anaemia)", "food": ["Iron-rich Indian foods: ragi, bajra, rajma, chana, masoor dal, palak, methi, beetroot, jaggery (gud) in small amount, dates, sesame (til), garden cress seeds (halim)", "Add vitamin C with meals (nimbu, amla, orange, guava) to help iron absorb", "Avoid chai/coffee within 1 hour of meals; they block iron absorption", "Non-vegetarians: eggs, chicken liver, fish help"], "yoga": ["Gentle walking, Anulom-Vilom (slow breathing), Tadasana. Avoid heavy exercise if dizzy"], "ayush": ["Cooking in a cast-iron kadhai can add a little iron to food"], "doctor": "Ask whether iron, B12 and ferritin should be tested and what is causing it (diet, periods, worms, bleeding). Do not self-start iron tablets in large doses."}, "ast:HIGH": {"title": "Raised liver enzymes (SGPT/SGOT)", "food": ["Avoid alcohol completely until reviewed", "Reduce fried/oily food, sweets and sugary drinks; more vegetables, fruits, dal", "Avoid unnecessary painkillers and herbal/ayurvedic powders or kushta bhasma of unknown source"], "yoga": ["Walking 30 minutes, Pranayama, Bhujangasana if comfortable"], "ayush": ["Do not self-start herbal liver tonics; some herbal products themselves harm the liver"], "doctor": "Ask about ultrasound, hepatitis B/C testing, fatty liver and a review of all medicines/supplements you take."}}, "SYM": {"acidity": {"title": "Acidity / heartburn / gas", "keywords": ["acidity", "heartburn", "gas", "bloating", "indigestion", "pet me jalan", "khatti dakar", "एसिडिटी", "गैस", "जलन"], "precautions": ["Eat smaller meals, 2-3 hours before sleeping; do not lie down right after eating", "Cut down very spicy/oily food, chai on empty stomach, smoking, alcohol, cold drinks", "Raise head end of bed slightly"], "food": ["Chhachh (buttermilk), banana, oats, plain khichdi, cooked vegetables; coconut water"], "yoga": ["Vajrasana after meals (5-10 min), Pawanmuktasana, slow Anulom-Vilom"], "ayush": ["Jeera/saunf water after meals, a little cold milk; traditional and low-risk"], "see_doctor": "Seek care if it lasts more than 2 weeks, with weight loss, trouble swallowing, vomiting, black stools, or if pain spreads to chest/arm."}, "cold_cough": {"title": "Cold, cough, sore throat", "keywords": ["cold", "cough", "sore throat", "runny nose", "khansi", "zukam", "sardi", "gala kharab", "खांसी", "जुकाम", "सर्दी", "गला"], "precautions": ["Rest, plenty of warm fluids, steam inhalation (careful with hot water, especially with children)", "Wash hands, cover cough; stay home if feverish"], "food": ["Warm soups, dal-chawal, haldi doodh (turmeric milk) if you are not diabetic-restricted, honey in warm water (not for babies under 1 year)"], "yoga": ["Gentle Anulom-Vilom and Bhramari when comfortable; avoid cold drinks"], "ayush": ["Tulsi-ginger-pepper kadha in food-level amounts; salt-water gargles"], "see_doctor": "See a doctor if there is breathlessness, fever more than 3 days, cough more than 2-3 weeks, blood in sputum, or wheezing. Children under 2 and older adults should be checked sooner."}, "fever": {"title": "Fever (mild)", "keywords": ["fever", "bukhar", "temperature", "बुखार"], "precautions": ["Rest, drink lots of fluids (ORS, coconut water, nimbu pani), light cotton clothes, sponge with lukewarm water", "Paracetamol is the usual choice; follow the label. Avoid aspirin in children and avoid self-medicating antibiotics"], "food": ["Light food: khichdi, dal water, curd rice, fruit, soups"], "yoga": ["Rest only, no exercise"], "ayush": [], "see_doctor": "In India, fever with body pain, rash or low platelets can be dengue/malaria/typhoid. See a doctor if fever lasts more than 2-3 days, goes above 103F (39.4C), or with vomiting, severe headache, rash or bleeding."}, "loose_motion": {"title": "Loose motions / diarrhoea", "keywords": ["loose motion", "diarrhea", "diarrhoea", "dast", "pet kharab", "दस्त", "लूज मोशन"], "precautions": ["Drink ORS after each loose stool (home ORS: 1 litre clean water + 6 level tsp sugar + half tsp salt)", "Wash hands; drink boiled/filtered water"], "food": ["Rice, banana, curd, dal water, khichdi, nimbu pani with salt and sugar"], "yoga": ["Rest"], "ayush": ["Jeera water, buttermilk are traditional"], "see_doctor": "Go to a doctor urgently for blood in stool, high fever, signs of dehydration (very dry mouth, no urine for 8 hours, dizziness), diarrhoea over 2 days, or any infant/elderly patient."}, "headache": {"title": "Headache (tension type)", "keywords": ["headache", "sir dard", "sar dard", "migraine", "सिरदर्द", "सर दर्द"], "precautions": ["Drink water, sleep 7-8 hours, take screen breaks, check eyesight, reduce skipping meals and too much chai"], "food": ["Regular meals; limit caffeine; buttermilk or coconut water for hydration"], "yoga": ["Gentle neck rolls, Shavasana, Bhramari pranayama, Anulom-Vilom"], "ayush": ["Head and neck massage with lukewarm oil, ginger in tea; traditional comfort measures"], "see_doctor": "Urgent care if it is sudden and the worst of your life, with fever and stiff neck, weakness, vision change, confusion, after head injury, or if it keeps getting worse. Check BP."}, "back_pain": {"title": "Back / neck / joint pain", "keywords": ["back pain", "neck pain", "joint pain", "knee pain", "kamar dard", "ghutne", "jodo me dard", "कमर दर्द", "घुटने", "जोड़ों"], "precautions": ["Stay gently active; avoid long sitting, take breaks every 30 minutes", "Keep a healthy weight, sit with back supported, avoid lifting heavy with a bent back", "Warm compress for stiffness"], "food": ["Calcium and protein: milk, curd, ragi, dal, sesame; vitamin D from morning sun"], "yoga": ["Gentle Bhujangasana, Marjariasana (cat-cow), Tadasana; avoid forward bends if pain shoots down the leg. Learn from a trained teacher"], "ayush": ["Warm til/sarson oil massage and warm compress are traditional comfort measures"], "see_doctor": "See a doctor for weakness or numbness in legs, loss of bladder/bowel control, fever, night pain, an injury, or pain over 2 weeks."}, "constipation": {"title": "Constipation", "keywords": ["constipation", "kabz", "kabj", "कब्ज"], "precautions": ["Drink 2-3 litres water unless told otherwise", "Go to the toilet at a regular time; do not hold urges"], "food": ["Fibre: isabgol is traditional but follow label, fruits (papaya, guava), vegetables, whole grains, soaked raisins/prunes, warm water in morning"], "yoga": ["Pawanmuktasana, Malasana, Vajrasana, walking"], "ayush": ["Warm water in the morning; triphala is traditional but ask a doctor first if you take other medicines or have diarrhoea-prone gut"], "see_doctor": "See a doctor if blood in stool, unexplained weight loss, or constipation lasts more than 3 weeks."}, "stress_sleep": {"title": "Stress, anxiety, poor sleep", "keywords": ["stress", "anxiety", "tension", "sleep", "insomnia", "neend", "chinta", "नींद", "तनाव", "चिंता"], "precautions": ["Fixed sleep and wake time, no phone 1 hour before bed, daylight in the morning, limit chai/coffee after afternoon", "Talk to someone you trust"], "food": ["Light dinner early; warm milk; avoid heavy meals late at night"], "yoga": ["Bhramari, Anulom-Vilom, Nadi Shodhana, Shavasana, Yoga Nidra 10-20 minutes"], "ayush": ["Meditation and slow breathing; avoid herbal sleeping powders without advice"], "see_doctor": "Seek professional help if low mood or worry lasts more than 2 weeks or affects work/relationships. Tele-MANAS 14416 is free and 24x7."}}, "SYMKEYS": ["acidity", "cold_cough", "fever", "loose_motion", "headache", "back_pain", "constipation", "stress_sleep"], "SAMPLE": "Hemoglobin 11.2 gm% (12.0-15.5)\nTotal WBC Count 7500 /cumm\nPlatelet Count 1.5 lakh/cumm\nHbA1c 6.1 %\nFasting Blood Sugar 126 mg/dL\nLDL Cholesterol 148 mg/dL\nHDL Cholesterol 38 mg/dL\nTotal Cholesterol 232 mg/dL\nTriglycerides 210 mg/dL\nS. Creatinine 0.8 mg/dL\nSGPT (ALT) 78 U/L\nVitamin D 12 ng/mL\nVitamin B12 150 pg/mL\nTSH 2.1 uIU/mL"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let LANG = 'English', AGE = 0, SEX = 'unknown', MODEL = '';
+const TTS = {English:'en-IN', 'हिन्दी':'hi-IN', Hinglish:'en-IN'};
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3500)}
+
+/* ---------------- UI text ---------------- */
+const UI = {
+ English:{title:'Your Virtual Physician- Health Assist',sub:'Understand your report and your health. Works offline.',set:'Settings: age, sex, optional local AI (Ollama)',tab1:'My lab report',tab2:'My problem',in1:'1 · Add your report',file:'Text file or text PDF (optional)',paste:'…or paste the report text',go1:'Understand my report',demo:'Try a sample',priv:'Everything stays in this browser. Names and ID numbers in the text are ignored.',out1:'2 · Your results',empty1:'Paste your report and press the green button.',in2:'Tell me what is troubling you',go2:'Get advice',ex:'Write in English, Hindi or Hinglish. For mild problems only.',out2:'Advice',empty2:'Describe your problem and press the green button.',
+  disc:'This is general health information, not a diagnosis or prescription. Please show your report to a doctor.',listen:'🔊 Listen',stop:'⏹ Stop',print:'🖨 Print one page for the doctor',
+  simple:'In simple words',doNow:'What you can do (checked guidance, in English)',food:'Food',yoga:'Yoga / movement',ayush:'Ayurveda / home practice',prec:'Precautions',askdoc:'Ask your doctor',seedoc:'See a doctor if',
+  noval:"I could not find known test values. Paste lines like 'Hemoglobin 11.2 gm%'.",allok:'All the values I could read are within the usual range. Keep healthy habits and show the full report to your doctor.',
+  nomatch:'I could not match this to a common mild problem. Please see a doctor, especially if it is getting worse, has lasted several days, or you feel very unwell.',worse:'If it gets worse, or you get chest pain, trouble breathing, heavy bleeding, confusion or fits, go to emergency (112/108).',
+  ayushnote:'Ayurveda and yoga items are gentle, food-level practices only. No herbal supplements or doses are suggested. If you take regular medicines (sugar, BP, thyroid, blood thinners), ask your doctor before adding any herbal product.',
+  conv:'Unit conversions',assumed:'Some values had no unit; the usual unit was assumed. Please check against the paper report.',
+  th:['Test','Your value','Normal range','Result'],lo:'LOW',hi:'HIGH',nm:'NORMAL',cr:'CRITICAL',egfr:'Estimated kidney filtration (eGFR)',pdfno:'PDF reader needs internet once; or paste the text instead.'},
+ 'हिन्दी':{title:'बेसिक फिजीशियन',sub:'अपनी रिपोर्ट और सेहत समझें। बिना इंटरनेट चलता है।',set:'सेटिंग: उम्र, लिंग, वैकल्पिक लोकल AI (Ollama)',tab1:'मेरी रिपोर्ट',tab2:'मेरी तकलीफ़',in1:'1 · रिपोर्ट डालें',file:'टेक्स्ट फ़ाइल या टेक्स्ट PDF (वैकल्पिक)',paste:'…या रिपोर्ट का टेक्स्ट पेस्ट करें',go1:'मेरी रिपोर्ट समझाएं',demo:'नमूना देखें',priv:'सब कुछ इसी ब्राउज़र में रहता है। नाम और आईडी नंबर अनदेखे किए जाते हैं।',out1:'2 · आपके नतीजे',empty1:'रिपोर्ट पेस्ट करें और हरा बटन दबाएं।',in2:'बताइए क्या तकलीफ़ है',go2:'सलाह लें',ex:'हिंदी, English या Hinglish में लिखें। सिर्फ़ हल्की तकलीफ़ों के लिए।',out2:'सलाह',empty2:'अपनी तकलीफ़ लिखें और हरा बटन दबाएं।',
+  disc:'यह सामान्य स्वास्थ्य जानकारी है, निदान या दवा की सलाह नहीं। कृपया अपनी रिपोर्ट डॉक्टर को दिखाएं।',listen:'🔊 सुनें',stop:'⏹ रोकें',print:'🖨 डॉक्टर के लिए एक पेज प्रिंट करें',
+  simple:'आसान शब्दों में',doNow:'आप क्या कर सकते हैं (जांची हुई सलाह, अंग्रेज़ी में)',food:'खान-पान',yoga:'योग / हलचल',ayush:'आयुर्वेद / घरेलू उपाय',prec:'सावधानियां',askdoc:'डॉक्टर से पूछें',seedoc:'डॉक्टर को दिखाएं अगर',
+  noval:"मुझे पहचाने हुए टेस्ट नहीं मिले। ऐसी लाइनें डालें: 'Hemoglobin 11.2 gm%'।",allok:'जो वैल्यू मैं पढ़ पाया वे सामान्य हैं। अच्छी आदतें रखें और पूरी रिपोर्ट डॉक्टर को दिखाएं।',
+  nomatch:'यह किसी आम हल्की तकलीफ़ से मेल नहीं खाई। कृपया डॉक्टर को दिखाएं, खासकर अगर बढ़ रही है, कई दिन से है, या बहुत बेचैनी है।',worse:'अगर तकलीफ़ बढ़े, या सीने में दर्द, सांस की दिक्कत, ज़्यादा खून बहना, बेहोशी या दौरे हों, तो तुरंत इमरजेंसी (112/108) जाएं।',
+  ayushnote:'आयुर्वेद और योग की बातें हल्की, खान-पान स्तर की हैं। कोई जड़ी-बूटी की गोली या मात्रा नहीं बताई गई। अगर आप नियमित दवा लेते हैं (शुगर, BP, थायरॉइड, खून पतला करने वाली), तो कोई भी हर्बल चीज़ लेने से पहले डॉक्टर से पूछें।',
+  conv:'यूनिट बदलाव',assumed:'कुछ वैल्यू में यूनिट नहीं थी; सामान्य यूनिट मानी गई। कृपया कागज़ की रिपोर्ट से मिला लें।',
+  th:['टेस्ट','आपकी वैल्यू','सामान्य सीमा','नतीजा'],lo:'कम',hi:'ज़्यादा',nm:'सामान्य',cr:'गंभीर',egfr:'किडनी छनाई का अनुमान (eGFR)',pdfno:'PDF पढ़ने के लिए एक बार इंटरनेट चाहिए; या टेक्स्ट पेस्ट करें।'},
+};
+UI.Hinglish = Object.assign({}, UI.English, {title:'Basic Physician',sub:'Apni report aur sehat samjhein. Bina internet chalta hai.',set:'Settings: umar, ling, optional local AI (Ollama)',tab1:'Meri report',tab2:'Meri takleef',in1:'1 · Report daalein',paste:'…ya report ka text paste karein',go1:'Meri report samjhayein',demo:'Sample dekhein',priv:'Sab kuch isi browser me rehta hai. Naam aur ID number ignore hote hain.',out1:'2 · Aapke nateeje',empty1:'Report paste karein aur hara button dabayein.',in2:'Bataiye kya takleef hai',go2:'Salah lein',ex:'Hindi, English ya Hinglish me likhein. Sirf halki takleef ke liye.',out2:'Salah',empty2:'Apni takleef likhein aur hara button dabayein.',
+  disc:'Yeh general health jaankari hai, diagnosis ya dawa ki salah nahi. Apni report doctor ko zaroor dikhayein.',listen:'🔊 Suniye',stop:'⏹ Rokein',print:'🖨 Doctor ke liye ek page print karein',simple:'Aasaan shabdon me',
+  th:['Test','Aapki value','Normal range','Result'],lo:'KAM',hi:'ZYADA',nm:'NORMAL',cr:'GAMBHIR'});
+
+/* local names for spoken summary (no model needed) */
+const NM = {hemoglobin:['हीमोग्लोबिन','haemoglobin'],hematocrit:['हेमेटोक्रिट','hematocrit'],wbc:['सफ़ेद रक्त कोशिकाएं','safed blood cells'],platelets:['प्लेटलेट्स','platelets'],glucose_fasting:['खाली पेट शुगर','khali pet sugar'],hba1c:['HbA1c (3 महीने की औसत शुगर)','HbA1c (3 mahine ki average sugar)'],total_cholesterol:['कुल कोलेस्ट्रॉल','total cholesterol'],ldl:['LDL (बुरा कोलेस्ट्रॉल)','LDL (kharab cholesterol)'],hdl:['HDL (अच्छा कोलेस्ट्रॉल)','HDL (achha cholesterol)'],triglycerides:['ट्राइग्लिसराइड','triglyceride'],creatinine:['क्रिएटिनिन (किडनी)','creatinine (kidney)'],bun:['यूरिया नाइट्रोजन','urea nitrogen'],sodium:['सोडियम','sodium'],potassium:['पोटैशियम','potassium'],calcium:['कैल्शियम','calcium'],alt:['SGPT (लिवर)','SGPT (liver)'],ast:['SGOT (लिवर)','SGOT (liver)'],bilirubin_total:['बिलीरुबिन','bilirubin'],tsh:['थायरॉइड TSH','thyroid TSH'],vitamin_d:['विटामिन D','vitamin D'],vitamin_b12:['विटामिन B12','vitamin B12'],ferritin:['फेरिटिन (आयरन भंडार)','ferritin (iron store)'],crp:['CRP (सूजन)','CRP (soojan)']};
+const ENG={hba1c:'HbA1c',ldl:'LDL cholesterol',hdl:'HDL cholesterol',alt:'SGPT (ALT)',ast:'SGOT (AST)',tsh:'TSH (thyroid)',wbc:'white blood cells',bun:'urea nitrogen',crp:'CRP',glucose_fasting:'fasting sugar',creatinine:'creatinine (kidney)',vitamin_d:'vitamin D',vitamin_b12:'vitamin B12',bilirubin_total:'bilirubin'};
+const nm = k => LANG==='English' ? (ENG[k]||k.replace(/_/g,' ')) : NM[k] ? NM[k][LANG==='Hinglish'?1:0] : k.replace(/_/g,' ');
+
+function setLang(l){LANG=l;const u=UI[l];
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));
+  for(const k of ['title','sub','set','tab1','tab2','in1','file','paste','go1','demo','priv','out1','empty1','in2','go2','ex','out2','empty2']){const e=$('#t_'+k);if(e)e.textContent=u[k]}
+  $('#disc').textContent=u.disc;document.documentElement.lang=l==='हिन्दी'?'hi':'en';
+  const r1=$('#out1').dataset.done, r2=$('#out2').dataset.done; if(r1)run1(); if(r2)run2();}
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+
+/* ---------------- units + checks (port of hia_india / hia_tools) ---------------- */
+const cleanUnit = u => (u||'').trim().toLowerCase().replace(/[µμ]/g,'u').replace(/\s/g,'').replace(/per/g,'/').replace(/\^/g,'').replace(/×/g,'x');
+function normalize(key, value, unit){
+  const v=+value, canon=D.REF[key][0], u=cleanUnit(unit);
+  if(canon==='10^3/uL'){
+    if(u.includes('lakh')) return [v*100,canon,`${value} lakh/cumm = ${+(v*100).toPrecision(6)} x10³/µL`];
+    if(['/cumm','/mm3','/ul','cells/cumm','cells/ul','/cmm'].includes(u)) return [v/1000,canon,`${value} /cumm = ${+(v/1000).toPrecision(6)} x10³/µL`];
+    if(['103/ul','10e3/ul','x103/ul','thou/cumm','thou/ul','k/ul','x109/l','109/l','10e9/l','103/cumm','x103/cumm'].includes(u)) return [v,canon,''];
+    if(v>=1000) return [v/1000,canon,`assumed ${value} is per cumm = ${v/1000} x10³/µL`];
+    if(key==='platelets'&&v<10) return [v*100,canon,`assumed ${value} lakh/cumm = ${v*100} x10³/µL`];
+    return [v,canon,''];
+  }
+  const cv=D.CONV[key+'|'+u]; if(cv!==undefined){const o=v*cv;return [o,canon,`${value} ${unit} = ${o.toFixed(2)} ${canon}`]}
+  if(key==='hba1c'&&u==='mmol/mol'){const o=v/10.929+2.15;return [o,canon,`${value} mmol/mol = ${o.toFixed(1)} %`]}
+  const cl=canon.toLowerCase().replace('^','');
+  if(D.SAME[u]===cl||canon.toLowerCase()===u) return [v,canon,''];
+  throw new Error('unit');
+}
+function check(key, v, sex){
+  const [unit,loM,hiM,loF,hiF,cLo,cHi]=D.REF[key];
+  let lo,hi; if(sex==='female'){lo=loF;hi=hiF}else if(sex==='male'){lo=loM;hi=hiM}else{lo=Math.min(loM,loF);hi=Math.max(hiM,hiF)}
+  let st='NORMAL';
+  if(cLo!=null&&v<cLo)st='CRITICAL_LOW';else if(cHi!=null&&v>cHi)st='CRITICAL_HIGH';else if(v<lo)st='LOW';else if(v>hi)st='HIGH';
+  return {status:st,range:[lo,hi],unit};
+}
+function egfr(cr,age,sex){const f=sex==='female',k=f?0.7:0.9,a=f?-0.241:-0.302,r=cr/k;
+  let e=142*Math.pow(Math.min(r,1),a)*Math.pow(Math.max(r,1),-1.2)*Math.pow(0.9938,age); if(f)e*=1.012; e=Math.round(e*10)/10;
+  const s=e>=90?'G1':e>=60?'G2 (60-89)':e>=45?'G3a (45-59)':e>=30?'G3b (30-44)':e>=15?'G4 (15-29)':'G5 (<15)'; return {e,s}}
+
+/* ---------------- report parser (port of hia_parse) ---------------- */
+const NAMES = D.NAMES, ORDER = Object.keys(NAMES).sort((a,b)=>b.length-a.length);
+const NAME_RE = new RegExp('(?<![a-z0-9])('+ORDER.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?![a-z0-9])','i');
+const NUM_RE=/[-+]?\d[\d,]*\.?\d*/, UNIT_RE=/^\s*((?:[a-zA-Zµμ%\/^0-9.\-]|x10)+(?:\/[a-zA-Zµμ0-9^]+)?)/;
+const NOT_UNIT=['to','-','and','h','l','high','low','normal','h/l'];
+function parseReport(text){const out=[],seen=new Set();
+  for(const line of (text||'').split(/\r?\n/)){
+    const m=line.match(NAME_RE); if(!m)continue;
+    const key=NAMES[m[1].toLowerCase()]; if(key==='_skip'||seen.has(key))continue;
+    const rest=line.slice(m.index+m[0].length), n=rest.match(NUM_RE); if(!n)continue;
+    const value=parseFloat(n[0].replace(/,/g,'')); if(isNaN(value))continue;
+    const um=rest.slice(n.index+n[0].length).match(UNIT_RE); let unit=um?um[1].trim():'';
+    if(NOT_UNIT.includes(unit.toLowerCase())||/^[\d.\-]+$/.test(unit))unit='';
+    seen.add(key); out.push({test:key,raw:m[1],value,unit,assumed:!unit});
+  } return out}
+function analyse(text){const results=[],abnormal=[],critical=[];let eg=null;
+  for(const r of parseReport(text)){
+    const unit=r.unit||D.REF[r.test][0]; let v,canon,note;
+    try{[v,canon,note]=normalize(r.test,r.value,unit)}catch(e){continue}
+    const c=check(r.test,v,SEX); results.push({...r,v,unit:canon,note,...c});
+    if(c.status.startsWith('CRITICAL'))critical.push(r.test);
+    if(c.status!=='NORMAL')abnormal.push([r.test,c.status.endsWith('LOW')?'LOW':'HIGH']);
+    if(r.test==='creatinine'&&AGE&&SEX!=='unknown')eg=egfr(v,AGE,SEX);
+  } return {results,abnormal,critical,eg}}
+
+/* ---------------- emergency triage ---------------- */
+const REDFLAGS = D.RED.map(([label,pats])=>[label,pats.map(p=>new RegExp(p,'i'))]);
+const redFlags = t => {t=(t||'').toLowerCase();return REDFLAGS.filter(([_,ps])=>ps.some(p=>p.test(t))).map(x=>x[0])};
+function emergencyHTML(flags){
+  const names=flags.join(', '), self=flags.includes('Self-harm or suicidal thoughts');
+  let h = LANG==='हिन्दी'
+   ? `<h2>⚠️ तुरंत इलाज लें</h2><p>आपने जो बताया वह गंभीर हो सकता है (${esc(names)}).</p><p><b>अभी 112 या 108 (एम्बुलेंस) पर कॉल करें, या नज़दीकी अस्पताल की इमरजेंसी में जाएं।</b></p><p>अकेले न रहें। किसी को साथ ले लें। ऐप के जवाब का इंतज़ार न करें।</p>`
+   : `<h2>⚠️ Get medical help right now</h2><p>What you described can be serious (${esc(names)}).</p><p><b>Call 112 (all emergencies) or 108 (ambulance) now. Or go to the nearest hospital emergency.</b></p><p>Do not stay alone and do not wait for this app's answer.</p>`;
+  if(self) h+=`<p><b>You are not alone. In India call Tele-MANAS 14416 (free, 24x7, many languages) or 112. If you are in immediate danger, tell someone near you right now.</b></p>`;
+  return h}
+function showEmergency(flags){const b=$('#emBox');b.innerHTML='<div class="em" role="alert">'+emergencyHTML(flags)+'</div>';
+  b.scrollIntoView({behavior:'smooth',block:'start'}); speak(b.textContent,'em')}
+const clearEmergency=()=>{$('#emBox').innerHTML='';speechSynthesis&&speechSynthesis.cancel()};
+
+/* ---------------- audio (browser speech, offline if a voice is installed) ---------------- */
+let SPEECH = {};
+function speak(text, id){
+  if(!('speechSynthesis' in window)){toast('Audio is not supported in this browser');return}
+  speechSynthesis.cancel(); const L=TTS[LANG], u=new SpeechSynthesisUtterance(text); u.lang=L; u.rate=0.9;
+  const vs=speechSynthesis.getVoices(), v=vs.find(v=>v.lang.replace('_','-')===L)||vs.find(v=>v.lang.startsWith(L.slice(0,2)));
+  if(v)u.voice=v; else toast('No '+L+' voice installed. Add one in your device Settings → Text-to-speech.');
+  speechSynthesis.speak(u)}
+function audioBar(id, text){SPEECH[id]=text;
+  return `<div class="btns"><button class="btn s" data-say="${id}">${UI[LANG].listen}</button><button class="btn s" data-stop="1">${UI[LANG].stop}</button></div>`}
+document.addEventListener('click',e=>{const s=e.target.closest('[data-say]');if(s)speak(SPEECH[s.dataset.say],s.dataset.say);
+  if(e.target.closest('[data-stop]'))speechSynthesis.cancel()});
+
+/* ---------------- guidance rendering ---------------- */
+function ul(a){return a&&a.length?'<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':''}
+function guideBlock(g,kind){const u=UI[LANG];
+  const parts=[['prec',g.precautions],['food',g.food],['yoga',g.yoga],['ayush',g.ayush]].filter(([k,a])=>a&&a.length);
+  const last = kind==='lab' ? `<h3>${u.askdoc}</h3><p>${esc(g.doctor)}</p>` : `<h3>${u.seedoc}</h3><p>${esc(g.see_doctor)}</p>`;
+  return `<details open><summary>${esc(g.title)}</summary>${parts.map(([k,a])=>`<h3>${u[k]}</h3>${ul(a)}`).join('')}${last}</details>`}
+function labGuidance(abn){const seen=new Set(),out=[];
+  for(const [t,d] of abn){const g=D.LAB[t+':'+d];if(g&&!seen.has(g.title)){seen.add(g.title);out.push(g)}} return out}
+
+/* ---------------- spoken summary: built-in (no model) ---------------- */
+function builtinSummary(a){
+  const L=LANG, ab=a.abnormal.slice(0,6);
+  if(!ab.length) return UI[L].allok;
+  const w={English:{lo:'is low',hi:'is high',intro:'Your report shows these things to look at: ',outro:'. In daily life: eat fresh home-cooked food with dal, vegetables and whole grains, cut sugar and fried food, walk 30 minutes every day, and sleep well. Please show this report to your doctor.'},
+    'हिन्दी':{lo:'कम है',hi:'ज़्यादा है',intro:'आपकी रिपोर्ट में ये बातें देखने लायक हैं: ',outro:'। रोज़मर्रा में: घर का ताज़ा खाना खाएं जिसमें दाल, सब्ज़ी और साबुत अनाज हो, चीनी और तला-भुना कम करें, रोज़ 30 मिनट टहलें और अच्छी नींद लें। कृपया यह रिपोर्ट अपने डॉक्टर को दिखाएं।'},
+    Hinglish:{lo:'kam hai',hi:'zyada hai',intro:'Aapki report me ye baatein dekhne layak hain: ',outro:'. Roz ki zindagi me: ghar ka taaza khana khayein jisme dal, sabzi aur saabut anaaj ho, cheeni aur tala-bhuna kam karein, roz 30 minute tahlein aur achhi neend lein. Kripya yeh report apne doctor ko dikhayein.'}}[L];
+  return w.intro+ab.map(([k,d])=>`${nm(k)} ${d==='LOW'?w.lo:w.hi}`).join(', ')+w.outro}
+
+/* ---------------- optional local model (Ollama) ---------------- */
+async function connect(quiet){const host=$('#host').value.replace(/\/$/,'');
+  try{const r=await fetch(host+'/api/tags'); const j=await r.json(); const sel=$('#model');
+    sel.innerHTML='<option value="">(none: built-in summary)</option>'+(j.models||[]).map(m=>`<option>${esc(m.name)}</option>`).join('');
+    if((j.models||[]).length){sel.value=j.models[0].name;MODEL=sel.value}
+    $('#odot').classList.add('on');$('#ostat').textContent='Connected. Pick a model above. The summary will be written by it.';if(!quiet)toast('Connected to Ollama')}
+  catch(e){$('#odot').classList.remove('on');MODEL='';$('#ostat').textContent="Not connected. If Ollama is running, start it with OLLAMA_ORIGINS=* (for Docker add -e OLLAMA_ORIGINS=*). Everything else still works.";if(!quiet)toast('Could not reach Ollama')}}
+async function llm(kind, facts){
+  if(!MODEL)return null;
+  const rule={English:'simple English','हिन्दी':'simple Hindi in Devanagari script',Hinglish:'simple Hindi written in Roman (English) letters, like everyday WhatsApp Hinglish'}[LANG];
+  const prompt=`You are a kind village-clinic health educator in India. Explain the ${kind} below to a patient with no medical background.
+Write in ${rule}. Use short sentences, about 120-170 words, no jargon, no markdown symbols (it will be read aloud).
+Rules: use ONLY the facts given; do not diagnose; do not name medicines or doses; do not add new numbers; cover (1) what is wrong in plain words, (2) what to do in daily life, (3) food, (4) when to see a doctor; stay calm, not scary.
+FACTS:
+${facts}`;
+  try{const r=await fetch($('#host').value.replace(/\/$/,'')+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:MODEL,stream:false,messages:[{role:'user',content:prompt}],options:{temperature:0.2,num_ctx:8192}})});
+    const j=await r.json(); return (j.message&&j.message.content||'').trim()||null}
+  catch(e){toast('Local model failed; showing the built-in summary.');return null}}
+
+/* ---------------- run: report ---------------- */
+async function run1(){
+  clearEmergency(); const u=UI[LANG], box=$('#out1'); box.dataset.done='';
+  const text=$('#rep').value; AGE=+$('#age').value||0; SEX=$('#sex').value;
+  if(!text.trim()){toast(u.empty1);return}
+  const a=analyse(text);
+  if(!a.results.length){box.innerHTML=`<div class="empty">${esc(u.noval)}</div>`;return}
+  box.dataset.done='1';
+  if(a.critical.length)showEmergency(['Critical lab value: '+a.critical.join(', ')]);
+  const lab={LOW:u.lo,HIGH:u.hi,NORMAL:u.nm,CRITICAL_LOW:u.cr+' '+u.lo,CRITICAL_HIGH:u.cr+' '+u.hi};
+  let h=`<div class="tw"><table><tr>${u.th.map(x=>`<th>${x}</th>`).join('')}</tr>`+a.results.map(r=>
+    `<tr><td>${esc(nm(r.test))}</td><td>${+r.v.toPrecision(5)} ${esc(r.unit)}</td><td>${+r.range[0].toPrecision(4)} - ${+r.range[1].toPrecision(4)}</td><td><span class="pill ${r.status}">${lab[r.status]}</span></td></tr>`).join('')+'</table></div>';
+  if(a.eg)h+=`<p class="mute">${u.egfr}: ${a.eg.e} (${a.eg.s})</p>`;
+  const notes=a.results.filter(r=>r.note).map(r=>`${esc(r.raw)}: ${esc(r.note)}`); if(notes.length)h+=`<p class="mute">${u.conv}: ${notes.join('; ')}</p>`;
+  if(a.results.some(r=>r.assumed))h+=`<p class="mute">${u.assumed}</p>`;
+  box.innerHTML=h+`<h3>${u.simple}</h3><div class="say" id="sumBox">…</div>`;
+  const entries=labGuidance(a.abnormal);
+  const facts='Abnormal results: '+(a.abnormal.map(([k,d])=>`${k.replace(/_/g,' ')} is ${d}`).join('; ')||'none')+'\n'+entries.map(g=>`${g.title}: food: ${g.food.join('; ')}. Movement: ${g.yoga.join('; ')}. Doctor: ${g.doctor}`).join('\n');
+  const summ=(await llm('lab report',facts))||builtinSummary(a);
+  if(!$('#sumBox'))return; $('#sumBox').textContent=summ;
+  let tail=audioBar('rep',summ);
+  if(entries.length)tail+=`<h3>${u.doNow}</h3>`+entries.map(g=>guideBlock(g,'lab')).join('')+`<p class="mute">${u.ayushnote}</p>`;
+  tail+=`<div class="btns"><button class="btn s" onclick="window.print()">${u.print}</button></div>`;
+  $('#sumBox').insertAdjacentHTML('afterend',tail);
+}
+
+/* ---------------- run: symptoms ---------------- */
+async function run2(){
+  clearEmergency(); const u=UI[LANG], box=$('#out2'); box.dataset.done='';
+  const text=$('#sym').value; if(!text.trim()){toast(u.empty2);return}
+  const flags=redFlags(text); if(flags.length){showEmergency(flags);box.innerHTML='';return}   // fixed message, no model
+  box.dataset.done='1';
+  const keys=D.SYMKEYS.filter(k=>D.SYM[k].keywords.some(kw=>text.toLowerCase().includes(kw)));
+  if(!keys.length){box.innerHTML=`<p>${esc(u.nomatch)}</p><p class="mute">${esc(u.worse)}</p>`;return}
+  const gs=keys.map(k=>D.SYM[k]); let h='';
+  const facts=gs.map(g=>`${g.title}: precautions ${g.precautions.join('; ')}. Food: ${g.food.join('; ')}. Movement: ${g.yoga.join('; ')}. See a doctor if: ${g.see_doctor}`).join('\n');
+  box.innerHTML=`<div class="say" id="symBox">…</div>`;
+  const summ=await llm('health problem and self-care advice',facts);
+  if(!$('#symBox'))return;
+  const eng=gs.map(g=>`${g.title}. ${g.precautions[0]||''} ${g.food[0]||''} See a doctor if: ${g.see_doctor}`).join(' ');
+  if(summ){$('#symBox').textContent=summ;h+=audioBar('sym',summ)}
+  else{$('#symBox').textContent=gs.map(g=>g.title).join(' · ');h+=(LANG!=='English'?`<p class="mute">Connect a local model (Settings) for a ${LANG} summary. The checked guidance below is in English.</p>`:'')+audioBar('sym',eng)}
+  h+=`<h3>${u.doNow}</h3>`+gs.map(g=>guideBlock(g,'sym')).join('')+`<p class="mute">${u.worse}</p><p class="mute">${u.ayushnote}</p>`;
+  $('#symBox').insertAdjacentHTML('afterend',h);
+}
+
+/* ---------------- wiring ---------------- */
+$('#go1').onclick=run1; $('#go2').onclick=run2;
+$('#demo').onclick=()=>{$('#rep').value=D.SAMPLE;$('#age').value=40;$('#sex').value='female';toast('Sample loaded')};
+function tab(n){$('#p1').hidden=n!==1;$('#p2').hidden=n!==2;$('#tab1').setAttribute('aria-selected',n===1);$('#tab2').setAttribute('aria-selected',n===2);clearEmergency()}
+$('#tab1').onclick=()=>tab(1);$('#tab2').onclick=()=>tab(2);
+$('#conn').onclick=()=>connect(false);$('#model').onchange=e=>MODEL=e.target.value;
+$('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;let t='';
+  try{ if(/\.pdf$/i.test(f.name)){ if(!window.pdfjsLib){toast(UI[LANG].pdfno);return}
+        const doc=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+        for(let p=1;p<=Math.min(doc.numPages,20);p++){const c=await(await doc.getPage(p)).getTextContent();let y=null,line='';
+          for(const it of c.items){const yy=it.transform[5];if(y!==null&&Math.abs(yy-y)>2){t+=line.trim()+'\n';line=''}line+=it.str+' ';y=yy} t+=line.trim()+'\n'}
+        if(t.replace(/\s/g,'').length<30){toast('No selectable text (maybe a scan). Please type or paste the values.');return}
+      } else t=await f.text();
+    $('#rep').value=($('#rep').value?$('#rep').value+'\n':'')+t; toast('File added')}catch(err){toast('Could not read that file. Please paste the text.')}};
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
+setLang('English'); connect(true);
+</script>
+</body>
+</html>
