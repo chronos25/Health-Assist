@@ -3,115 +3,130 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Health Assist · Virtual Physician</title>
+<title>HIA · Basic Physician</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-:root{--bg:#f4f7f5;--card:#fff;--ink:#1b2a25;--mute:#5b6b65;--line:#dbe4df;--brand:#1f7a5c;--soft:#e8f3ee;--hi:#b4432b;--lo:#1f5fa8;--ok:#1f7a5c;--warn:#fff3dc;--warnink:#7a4f00;--em:#fdecea}
-@media(prefers-color-scheme:dark){:root{--bg:#111815;--card:#19231f;--ink:#e8f0ec;--mute:#93a59d;--line:#2b3a34;--brand:#3fb68d;--soft:#20302a;--hi:#f08a70;--lo:#7db3f2;--ok:#5fd0a5;--warn:#33290f;--warnink:#f0c86a;--em:#3a1e1a}}
-*{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",Roboto,sans-serif}
-.wrap{max-width:1000px;margin:0 auto;padding:16px 14px 60px}
-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.logo{width:46px;height:46px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:26px}
-h1{font-size:1.3rem;margin:0;line-height:1.2}header p{margin:0;color:var(--mute);font-size:.9rem}
-.sp{flex:1}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:.95rem;color:var(--ink);background:var(--card)}
-.seg button[aria-pressed=true]{background:var(--brand);color:#fff}
-.note{background:var(--warn);color:var(--warnink);border-radius:10px;padding:10px 14px;font-size:.9rem;margin:10px 0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
-.tabs{display:flex;gap:8px;margin:12px 0}
-.tabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:11px 8px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600}
-.tabs button[aria-selected=true]{background:var(--brand);color:#fff;border-color:var(--brand)}
-.grid{display:grid;gap:14px;grid-template-columns:1fr}
-@media(min-width:860px){.grid{grid-template-columns:5fr 6fr;align-items:start}}
-h2{font-size:1.05rem;margin:0 0 10px}h3{font-size:1rem;margin:14px 0 4px;color:var(--brand)}
-label{display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px}
-textarea,input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
-textarea{min-height:200px;resize:vertical}
-textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.btn{font:inherit;border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:600}
-.btn.s{background:transparent;color:var(--brand)}.btn:disabled{opacity:.5}
+:root{--bs-body-font-family:'Noto Sans','Noto Sans Devanagari',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--bs-body-bg:#fff;--g:#198754;--hi:#dc3545;--lo:#0d6efd;--line:#e5e7eb;--mute:#6c757d}
+html{font-size:100%}
+body{background:#fff;color:#212529;font-size:1.0625rem;padding-bottom:84px}
+.hia h2{font-size:1.1rem;font-weight:700;margin:0 0 .75rem;color:#212529}
+.hia h3{font-size:1rem;font-weight:700;color:var(--g);margin:1.1rem 0 .35rem}
+.hia .card{border:1px solid var(--line);border-radius:14px;box-shadow:none}
+.mute{color:var(--mute);font-size:.86rem}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-table{border-collapse:collapse;width:100%;font-size:.92rem}.tw{overflow-x:auto}
-th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mute)}
-.pill{font-weight:700;font-size:.78rem;padding:2px 9px;border-radius:999px;background:var(--soft)}
-.HIGH,.CRITICAL_HIGH,.CRITICAL_LOW{color:var(--hi)}.LOW{color:var(--lo)}.NORMAL{color:var(--ok)}
-.em{background:var(--em);border:2px solid var(--hi);border-radius:14px;padding:14px 18px;margin-bottom:14px}
-.em h2{color:var(--hi)}
-.say{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:1.05rem}
-details{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0}
-summary{cursor:pointer;font-weight:600}
-li{margin:3px 0}.mute{color:var(--mute);font-size:.85rem}
-.empty{color:var(--mute);text-align:center;padding:30px 10px}
-.set{font-size:.9rem}.set summary{font-weight:500;color:var(--mute)}
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:#999}.dot.on{background:var(--ok)}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:.9rem;z-index:9;max-width:92%}
-@media print{body{background:#fff;color:#000}header .seg,.tabs,#inputCol,.btns,.set,.note,#sympInput{display:none!important}.card{border:none}.grid{display:block}}
+.btn{min-height:44px;border-radius:10px;font-weight:600}
+.btn-outline-success[aria-pressed=true]{background:var(--g);color:#fff}
+.nav-pills .nav-link{border:1px solid var(--line);color:#212529;font-weight:600;min-height:46px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;width:100%}
+.nav-pills .nav-link.active{background:var(--g);border-color:var(--g);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.chip{all:unset;cursor:pointer;border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.98rem;min-height:42px;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;background:#fff}
+.chip[aria-pressed=true]{border-color:var(--g);background:#e9f6ef;font-weight:700}
+.chip:focus-visible,.btn:focus-visible,.form-control:focus{outline:2px solid var(--g);outline-offset:1px}
+.mic.rec{background:var(--hi);border-color:var(--hi);color:#fff}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tile{border-radius:12px;padding:10px 6px;text-align:center;border:1px solid var(--line)}
+.tile b{display:block;font-size:1.6rem;line-height:1.1}.tile span{font-size:.8rem}
+.tile.ok{background:#e9f6ef;color:#146c43}.tile.warn{background:#fff3cd;color:#8a6100}.tile.bad{background:#fdeaea;color:#b02a37}
+.res{border:1px solid var(--line);border-left:5px solid var(--g);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fff}
+.res.HIGH,.res.CRITICAL_HIGH,.res.CRITICAL_LOW{border-left-color:var(--hi)}.res.LOW{border-left-color:var(--lo)}
+.rt{display:flex;justify-content:space-between;align-items:center;gap:8px}.rv{font-size:1.1rem;margin:2px 0 8px}.rv small{font-size:.8rem;color:var(--mute)}
+.pill{font-weight:700;font-size:.76rem;padding:2px 10px;border-radius:999px;background:#f1f3f5}
+.pill.HIGH,.pill.CRITICAL_HIGH,.pill.CRITICAL_LOW,.res.HIGH .rv>:first-child,.res.CRITICAL_HIGH .rv>:first-child{color:var(--hi)}.pill.LOW,.res.LOW .rv>:first-child{color:var(--lo)}.pill.NORMAL{color:var(--g)}
+.rbar{position:relative;height:8px;background:#eceff1;border-radius:6px}
+.rbar .zone{position:absolute;top:0;bottom:0;background:var(--g);opacity:.3;border-radius:6px}
+.rbar .mk{position:absolute;top:-5px;width:6px;height:18px;border-radius:3px;background:var(--g);transform:translateX(-50%)}
+.rbar .mk.HIGH,.rbar .mk.CRITICAL_HIGH,.rbar .mk.CRITICAL_LOW{background:var(--hi)}.rbar .mk.LOW{background:var(--lo)}
+.say{background:#f6faf8;border:1px solid #d6eadf;border-radius:12px;padding:12px 14px;font-size:1.05rem}
+.em{background:#fdeaea;border:2px solid var(--hi);border-radius:14px;padding:14px 18px;margin-bottom:14px}.em h2{color:var(--hi)}
+details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+li{margin:3px 0}
+.empty{color:var(--mute);text-align:center;padding:28px 10px}.empty .big{font-size:2.4rem;display:block}
+.spin{display:inline-block;width:16px;height:16px;border:3px solid var(--line);border-top-color:var(--g);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:#adb5bd}.dot.on{background:var(--g)}
+.sos{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;background:#fff;border-top:2px solid var(--hi);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));z-index:1030;font-size:.92rem;box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+.sos a{background:var(--hi);color:#fff;text-decoration:none;font-weight:700;border-radius:10px;padding:7px 14px;min-height:38px;display:inline-flex;align-items:center}
+.hia-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:#212529;color:#fff;padding:9px 16px;border-radius:10px;font-size:.9rem;z-index:1060;max-width:92%}
+@media print{.navbar,.about,.sos,.chips,.nav,#inputCol,.btns,.adv,.alert,#sympInput{display:none!important}.card{border:none}}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="logo" aria-hidden="true">🩺</div>
-    <div><h1 id="t_title">Virtual Physician</h1><p id="t_sub">Understand your report and your health. Works offline.</p></div>
-    <span class="sp"></span>
-    <div class="seg" role="group" aria-label="Language">
-      <button data-lang="English" aria-pressed="true">English</button>
-      <button data-lang="हिन्दी" aria-pressed="false">हिन्दी</button>
-      <button data-lang="Hinglish" aria-pressed="false">Hinglish</button>
+<body class="hia">
+<nav class="navbar border-bottom bg-white">
+  <div class="container" style="max-width:980px">
+    <span class="navbar-brand d-flex align-items-center gap-2 mb-0">
+      <span style="font-size:1.6rem" aria-hidden="true">🩺</span>
+      <span><b id="t_title">Basic Physician</b><br><small class="text-muted fw-normal" id="t_sub" style="font-size:.78rem">Understand your report and your health</small></span>
+    </span>
+    <div class="d-flex gap-2 align-items-center">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Text size"><button id="fsm" class="btn btn-outline-secondary" aria-label="Smaller text">A−</button><button id="fsp" class="btn btn-outline-secondary" aria-label="Larger text">A+</button></div>
+      <div class="btn-group btn-group-sm" role="group" aria-label="Language">
+        <button class="btn btn-outline-success" data-lang="English" aria-pressed="true">English</button>
+        <button class="btn btn-outline-success" data-lang="हिन्दी" aria-pressed="false">हिन्दी</button>
+        <button class="btn btn-outline-success" data-lang="Hinglish" aria-pressed="false">Hinglish</button>
+      </div>
     </div>
-  </header>
-  <div class="note" id="disc"></div>
-
-  <div class="card set"><details>
-    <summary><span id="odot" class="dot"></span><span id="t_set">Settings: age, sex, optional local AI (Ollama)</span></summary>
-    <div class="row">
-      <div><label for="age">Age / उम्र</label><input id="age" type="number" min="0" max="120" inputmode="numeric" placeholder="e.g. 40"></div>
-      <div><label for="sex">Sex / लिंग</label><select id="sex"><option value="unknown">-</option><option value="female">Female / महिला</option><option value="male">Male / पुरुष</option></select></div>
-    </div>
-    <div class="row">
-      <div><label for="host">Ollama address</label><input id="host" value="http://localhost:11434"></div>
-      <div><label for="model">Model</label><select id="model"><option value="">(none: built-in summary)</option></select></div>
-    </div>
-    <div class="btns"><button class="btn s" id="conn" type="button">Connect to Ollama</button></div>
-    <p class="mute" id="ostat">Optional. Without it you still get results, flags, guidance and audio. With it, the summary is written more naturally.
-      Start Ollama with <code>OLLAMA_ORIGINS=*</code> so this page may talk to it.</p>
-  </details></div>
-
-  <div class="tabs" role="tablist">
-    <button role="tab" id="tab1" aria-selected="true">📄 <span id="t_tab1">My lab report</span></button>
-    <button role="tab" id="tab2" aria-selected="false">🤒 <span id="t_tab2">My problem</span></button>
   </div>
+</nav>
+
+<main class="container py-3" style="max-width:980px">
+  <div class="alert alert-warning py-2 small mb-3" id="disc" role="note"></div>
+
+  <div class="row g-2 align-items-end mb-3 about">
+    <div class="col-6 col-md-3"><label class="form-label small mb-1" for="age" id="t_age">Age</label><input id="age" type="number" class="form-control" min="0" max="120" inputmode="numeric" placeholder="e.g. 40"></div>
+    <div class="col-6 col-md-3"><label class="form-label small mb-1" for="sex" id="t_sex">Sex</label><select id="sex" class="form-select"><option value="unknown">-</option><option value="female">Female / महिला</option><option value="male">Male / पुरुष</option></select></div>
+    <div class="col-12 col-md-6"><div class="mute" id="t_about">Age and sex give the right normal ranges.</div></div>
+  </div>
+
+  <ul class="nav nav-pills nav-fill gap-2 mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" role="tab" id="tab1" aria-selected="true">📄 <span id="t_tab1">My lab report</span></button></li>
+    <li class="nav-item"><button class="nav-link" role="tab" id="tab2" aria-selected="false">🤒 <span id="t_tab2">My problem</span></button></li>
+  </ul>
 
   <div id="emBox"></div>
 
-  <section id="p1" class="grid">
-    <div class="card" id="inputCol">
+  <section id="p1" class="row g-3">
+    <div class="col-lg-5" id="inputCol"><div class="card"><div class="card-body">
       <h2 id="t_in1">1 · Add your report</h2>
-      <label for="file" id="t_file">Text file or text PDF (optional)</label>
-      <input type="file" id="file" accept=".txt,.pdf,text/plain,application/pdf">
-      <label for="rep" id="t_paste">…or paste the report text</label>
-      <textarea id="rep" placeholder="Hemoglobin 11.2 gm%&#10;Fasting Blood Sugar 126 mg/dL&#10;Platelet Count 1.5 lakh/cumm"></textarea>
-      <div class="btns"><button class="btn" id="go1"><span id="t_go1">Understand my report</span></button>
-        <button class="btn s" id="demo" type="button"><span id="t_demo">Try a sample</span></button></div>
-      <p class="mute" id="t_priv">Everything stays in this browser. Names and ID numbers in the text are ignored.</p>
-    </div>
-    <div class="card"><h2 id="t_out1">2 · Your results</h2><div id="out1"><div class="empty" id="t_empty1">Paste your report and press the green button.</div></div></div>
+      <label class="form-label small" for="file" id="t_file">Text file or text PDF (optional)</label>
+      <input type="file" id="file" class="form-control mb-2" accept=".txt,.pdf,text/plain,application/pdf">
+      <label class="form-label small" for="rep" id="t_paste">…or paste the report text</label>
+      <textarea id="rep" class="form-control" rows="9" placeholder="Hemoglobin 11.2 gm%&#10;Fasting Blood Sugar 126 mg/dL&#10;Platelet Count 1.5 lakh/cumm"></textarea>
+      <div class="btns"><button class="btn btn-success" id="go1"><span id="t_go1">Understand my report</span></button>
+        <button class="btn btn-outline-success" id="demo" type="button"><span id="t_demo">Try a sample</span></button>
+        <button class="btn btn-outline-secondary" id="clr" type="button"><span id="t_clr">Clear</span></button></div>
+      <p class="mute mt-3 mb-0" id="t_priv">Everything stays in this browser.</p>
+    </div></div></div>
+    <div class="col-lg-7"><div class="card"><div class="card-body"><h2 id="t_out1">2 · Your results</h2><div id="out1"><div class="empty"><span class="big">📄</span>Paste your report and press the green button.</div></div></div></div></div>
   </section>
 
-  <section id="p2" hidden class="grid">
-    <div class="card" id="sympInput">
+  <section id="p2" hidden class="row g-3">
+    <div class="col-lg-5" id="sympInput"><div class="card"><div class="card-body">
       <h2 id="t_in2">Tell me what is troubling you</h2>
-      <textarea id="sym" style="min-height:140px" placeholder="e.g. mujhe 2 din se acidity aur sir dard hai"></textarea>
-      <div class="btns"><button class="btn" id="go2"><span id="t_go2">Get advice</span></button></div>
-      <p class="mute" id="t_ex">Write in English, Hindi or Hinglish. For mild problems only.</p>
-    </div>
-    <div class="card"><h2 id="t_out2">Advice</h2><div id="out2"><div class="empty" id="t_empty2">Describe your problem and press the green button.</div></div></div>
+      <p class="mute mb-1" id="t_pick">Tap what applies:</p><div class="chips" id="chips"></div>
+      <label class="form-label small" for="sym" id="t_more">Or write / speak in your own words</label>
+      <textarea id="sym" class="form-control" rows="4" placeholder="e.g. mujhe 2 din se acidity aur sir dard hai"></textarea>
+      <div class="btns"><button class="btn btn-success" id="go2"><span id="t_go2">Get advice</span></button>
+        <button class="btn btn-outline-success mic" id="mic" type="button" hidden title="Needs internet in most browsers"><span id="t_mic">🎤 Speak</span></button></div>
+      <p class="mute mt-3 mb-0" id="t_ex">Write in English, Hindi or Hinglish. For mild problems only.</p>
+    </div></div></div>
+    <div class="col-lg-7"><div class="card"><div class="card-body"><h2 id="t_out2">Advice</h2><div id="out2"><div class="empty"><span class="big">🤒</span>Describe your problem and press the green button.</div></div></div></div></div>
   </section>
 
-  <p class="mute">Emergency 112 · Ambulance 108 · Mental health Tele-MANAS 14416 (free, 24x7)</p>
-</div>
+  <details class="adv mt-4 small">
+    <summary class="text-muted fw-normal"><span id="odot" class="dot"></span><span id="t_set">Advanced: optional local AI (Ollama)</span></summary>
+    <div class="row g-2 mt-1">
+      <div class="col-md-6"><label class="form-label small" for="host">Ollama address</label><input id="host" class="form-control form-control-sm" value="http://localhost:11434"></div>
+      <div class="col-md-6"><label class="form-label small" for="model">Model</label><select id="model" class="form-select form-select-sm"><option value="">(none: built-in summary)</option></select></div>
+    </div>
+    <div class="btns"><button class="btn btn-sm btn-outline-secondary" id="conn" type="button">Connect to Ollama</button></div>
+    <p class="mute mt-2 mb-0" id="ostat">Optional. Without it you still get results, flags, guidance and audio. Start Ollama with <code>OLLAMA_ORIGINS=*</code> so this page may talk to it.</p>
+  </details>
+</main>
+
+<nav class="sos" aria-label="Emergency"><span>🚨 <b id="t_sos">Emergency?</b></span><a href="tel:112">112</a><a href="tel:108"><span id="t_amb">108 Ambulance</span></a></nav>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
 <script>
@@ -120,30 +135,30 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 let LANG = 'English', AGE = 0, SEX = 'unknown', MODEL = '';
 const TTS = {English:'en-IN', 'हिन्दी':'hi-IN', Hinglish:'en-IN'};
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3500)}
+function toast(m){const t=document.createElement('div');t.className='hia-toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3500)}
 
 /* ---------------- UI text ---------------- */
 const UI = {
- English:{title:'Your Virtual Physician- Health Assist',sub:'Understand your report and your health. Works offline.',set:'Settings: age, sex, optional local AI (Ollama)',tab1:'My lab report',tab2:'My problem',in1:'1 · Add your report',file:'Text file or text PDF (optional)',paste:'…or paste the report text',go1:'Understand my report',demo:'Try a sample',priv:'Everything stays in this browser. Names and ID numbers in the text are ignored.',out1:'2 · Your results',empty1:'Paste your report and press the green button.',in2:'Tell me what is troubling you',go2:'Get advice',ex:'Write in English, Hindi or Hinglish. For mild problems only.',out2:'Advice',empty2:'Describe your problem and press the green button.',
+ English:{title:'Basic Physician',sub:'Understand your report and your health. Your data stays in your browser.',set:'Settings: optional local AI (Ollama)',tab1:'My lab report',tab2:'My problem',in1:'1 · Add your report',file:'Text file or text PDF (optional)',paste:'…or paste the report text',go1:'Understand my report',demo:'Try a sample',priv:'Everything stays in this browser. Names and ID numbers in the text are ignored.',out1:'2 · Your results',empty1:'Paste your report and press the green button.',in2:'Tell me what is troubling you',go2:'Get advice',ex:'Write in English, Hindi or Hinglish. For mild problems only.',out2:'Advice',empty2:'Describe your problem and press the green button.',
   disc:'This is general health information, not a diagnosis or prescription. Please show your report to a doctor.',listen:'🔊 Listen',stop:'⏹ Stop',print:'🖨 Print one page for the doctor',
   simple:'In simple words',doNow:'What you can do (checked guidance, in English)',food:'Food',yoga:'Yoga / movement',ayush:'Ayurveda / home practice',prec:'Precautions',askdoc:'Ask your doctor',seedoc:'See a doctor if',
   noval:"I could not find known test values. Paste lines like 'Hemoglobin 11.2 gm%'.",allok:'All the values I could read are within the usual range. Keep healthy habits and show the full report to your doctor.',
   nomatch:'I could not match this to a common mild problem. Please see a doctor, especially if it is getting worse, has lasted several days, or you feel very unwell.',worse:'If it gets worse, or you get chest pain, trouble breathing, heavy bleeding, confusion or fits, go to emergency (112/108).',
   ayushnote:'Ayurveda and yoga items are gentle, food-level practices only. No herbal supplements or doses are suggested. If you take regular medicines (sugar, BP, thyroid, blood thinners), ask your doctor before adding any herbal product.',
   conv:'Unit conversions',assumed:'Some values had no unit; the usual unit was assumed. Please check against the paper report.',
-  th:['Test','Your value','Normal range','Result'],lo:'LOW',hi:'HIGH',nm:'NORMAL',cr:'CRITICAL',egfr:'Estimated kidney filtration (eGFR)',pdfno:'PDF reader needs internet once; or paste the text instead.'},
- 'हिन्दी':{title:'बेसिक फिजीशियन',sub:'अपनी रिपोर्ट और सेहत समझें। बिना इंटरनेट चलता है।',set:'सेटिंग: उम्र, लिंग, वैकल्पिक लोकल AI (Ollama)',tab1:'मेरी रिपोर्ट',tab2:'मेरी तकलीफ़',in1:'1 · रिपोर्ट डालें',file:'टेक्स्ट फ़ाइल या टेक्स्ट PDF (वैकल्पिक)',paste:'…या रिपोर्ट का टेक्स्ट पेस्ट करें',go1:'मेरी रिपोर्ट समझाएं',demo:'नमूना देखें',priv:'सब कुछ इसी ब्राउज़र में रहता है। नाम और आईडी नंबर अनदेखे किए जाते हैं।',out1:'2 · आपके नतीजे',empty1:'रिपोर्ट पेस्ट करें और हरा बटन दबाएं।',in2:'बताइए क्या तकलीफ़ है',go2:'सलाह लें',ex:'हिंदी, English या Hinglish में लिखें। सिर्फ़ हल्की तकलीफ़ों के लिए।',out2:'सलाह',empty2:'अपनी तकलीफ़ लिखें और हरा बटन दबाएं।',
+  s1:'Paste your report or pick your problem',s2:'See simple results',s3:'Listen, print or share',about:'About you (gives the right normal ranges)',age:'Age',sex:'Sex',clr:'Clear',pick:'Tap what applies:',more:'Or write / speak in your own words',mic:'🎤 Speak',sos:'Emergency?',amb:'108 Ambulance',normal:'Normal',tOK:'Normal',tAb:'Needs attention',tCr:'Urgent',writing:'Writing your summary…',attn:'Needs attention',within:'Within normal range',share:'📲 Share on WhatsApp',copy:'📋 Copy',copied:'Copied',th:['Test','Your value','Normal range','Result'],lo:'LOW',hi:'HIGH',nm:'NORMAL',cr:'CRITICAL',egfr:'Estimated kidney filtration (eGFR)',pdfno:'PDF reader needs internet once; or paste the text instead.'},
+ 'हिन्दी':{title:'बेसिक फिजीशियन',sub:'अपनी रिपोर्ट और सेहत समझें। आपका डेटा आपके ब्राउज़र में ही रहता है।',set:'सेटिंग: वैकल्पिक लोकल AI (Ollama)',tab1:'मेरी रिपोर्ट',tab2:'मेरी तकलीफ़',in1:'1 · रिपोर्ट डालें',file:'टेक्स्ट फ़ाइल या टेक्स्ट PDF (वैकल्पिक)',paste:'…या रिपोर्ट का टेक्स्ट पेस्ट करें',go1:'मेरी रिपोर्ट समझाएं',demo:'नमूना देखें',priv:'सब कुछ इसी ब्राउज़र में रहता है। नाम और आईडी नंबर अनदेखे किए जाते हैं।',out1:'2 · आपके नतीजे',empty1:'रिपोर्ट पेस्ट करें और हरा बटन दबाएं।',in2:'बताइए क्या तकलीफ़ है',go2:'सलाह लें',ex:'हिंदी, English या Hinglish में लिखें। सिर्फ़ हल्की तकलीफ़ों के लिए।',out2:'सलाह',empty2:'अपनी तकलीफ़ लिखें और हरा बटन दबाएं।',
   disc:'यह सामान्य स्वास्थ्य जानकारी है, निदान या दवा की सलाह नहीं। कृपया अपनी रिपोर्ट डॉक्टर को दिखाएं।',listen:'🔊 सुनें',stop:'⏹ रोकें',print:'🖨 डॉक्टर के लिए एक पेज प्रिंट करें',
   simple:'आसान शब्दों में',doNow:'आप क्या कर सकते हैं (जांची हुई सलाह, अंग्रेज़ी में)',food:'खान-पान',yoga:'योग / हलचल',ayush:'आयुर्वेद / घरेलू उपाय',prec:'सावधानियां',askdoc:'डॉक्टर से पूछें',seedoc:'डॉक्टर को दिखाएं अगर',
   noval:"मुझे पहचाने हुए टेस्ट नहीं मिले। ऐसी लाइनें डालें: 'Hemoglobin 11.2 gm%'।",allok:'जो वैल्यू मैं पढ़ पाया वे सामान्य हैं। अच्छी आदतें रखें और पूरी रिपोर्ट डॉक्टर को दिखाएं।',
   nomatch:'यह किसी आम हल्की तकलीफ़ से मेल नहीं खाई। कृपया डॉक्टर को दिखाएं, खासकर अगर बढ़ रही है, कई दिन से है, या बहुत बेचैनी है।',worse:'अगर तकलीफ़ बढ़े, या सीने में दर्द, सांस की दिक्कत, ज़्यादा खून बहना, बेहोशी या दौरे हों, तो तुरंत इमरजेंसी (112/108) जाएं।',
   ayushnote:'आयुर्वेद और योग की बातें हल्की, खान-पान स्तर की हैं। कोई जड़ी-बूटी की गोली या मात्रा नहीं बताई गई। अगर आप नियमित दवा लेते हैं (शुगर, BP, थायरॉइड, खून पतला करने वाली), तो कोई भी हर्बल चीज़ लेने से पहले डॉक्टर से पूछें।',
   conv:'यूनिट बदलाव',assumed:'कुछ वैल्यू में यूनिट नहीं थी; सामान्य यूनिट मानी गई। कृपया कागज़ की रिपोर्ट से मिला लें।',
-  th:['टेस्ट','आपकी वैल्यू','सामान्य सीमा','नतीजा'],lo:'कम',hi:'ज़्यादा',nm:'सामान्य',cr:'गंभीर',egfr:'किडनी छनाई का अनुमान (eGFR)',pdfno:'PDF पढ़ने के लिए एक बार इंटरनेट चाहिए; या टेक्स्ट पेस्ट करें।'},
+  s1:'रिपोर्ट डालें या अपनी तकलीफ़ चुनें',s2:'आसान नतीजे देखें',s3:'सुनें, प्रिंट करें या भेजें',about:'आपके बारे में (सही सामान्य सीमा के लिए)',age:'उम्र',sex:'लिंग',clr:'साफ़ करें',pick:'जो लागू हो उसे दबाएं:',more:'या अपने शब्दों में लिखें / बोलें',mic:'🎤 बोलें',sos:'इमरजेंसी?',amb:'108 एम्बुलेंस',normal:'सामान्य',tOK:'सामान्य',tAb:'ध्यान दें',tCr:'तुरंत',writing:'आपका सारांश लिखा जा रहा है…',attn:'ध्यान देने लायक',within:'सामान्य सीमा में',share:'📲 WhatsApp पर भेजें',copy:'📋 कॉपी',copied:'कॉपी हो गया',th:['टेस्ट','आपकी वैल्यू','सामान्य सीमा','नतीजा'],lo:'कम',hi:'ज़्यादा',nm:'सामान्य',cr:'गंभीर',egfr:'किडनी छनाई का अनुमान (eGFR)',pdfno:'PDF पढ़ने के लिए एक बार इंटरनेट चाहिए; या टेक्स्ट पेस्ट करें।'},
 };
-UI.Hinglish = Object.assign({}, UI.English, {title:'Basic Physician',sub:'Apni report aur sehat samjhein. Bina internet chalta hai.',set:'Settings: umar, ling, optional local AI (Ollama)',tab1:'Meri report',tab2:'Meri takleef',in1:'1 · Report daalein',paste:'…ya report ka text paste karein',go1:'Meri report samjhayein',demo:'Sample dekhein',priv:'Sab kuch isi browser me rehta hai. Naam aur ID number ignore hote hain.',out1:'2 · Aapke nateeje',empty1:'Report paste karein aur hara button dabayein.',in2:'Bataiye kya takleef hai',go2:'Salah lein',ex:'Hindi, English ya Hinglish me likhein. Sirf halki takleef ke liye.',out2:'Salah',empty2:'Apni takleef likhein aur hara button dabayein.',
+UI.Hinglish = Object.assign({}, UI.English, {title:'Basic Physician',sub:'Apni report aur sehat samjhein. Aapka data aapke browser me hi rehta hai.',set:'Settings: optional local AI (Ollama)',tab1:'Meri report',tab2:'Meri takleef',in1:'1 · Report daalein',paste:'…ya report ka text paste karein',go1:'Meri report samjhayein',demo:'Sample dekhein',priv:'Sab kuch isi browser me rehta hai. Naam aur ID number ignore hote hain.',out1:'2 · Aapke nateeje',empty1:'Report paste karein aur hara button dabayein.',in2:'Bataiye kya takleef hai',go2:'Salah lein',ex:'Hindi, English ya Hinglish me likhein. Sirf halki takleef ke liye.',out2:'Salah',empty2:'Apni takleef likhein aur hara button dabayein.',
   disc:'Yeh general health jaankari hai, diagnosis ya dawa ki salah nahi. Apni report doctor ko zaroor dikhayein.',listen:'🔊 Suniye',stop:'⏹ Rokein',print:'🖨 Doctor ke liye ek page print karein',simple:'Aasaan shabdon me',
-  th:['Test','Aapki value','Normal range','Result'],lo:'KAM',hi:'ZYADA',nm:'NORMAL',cr:'GAMBHIR'});
+  s1:'Report daalein ya apni takleef chunein',s2:'Aasaan nateeje dekhein',s3:'Suniye, print karein ya bhejein',about:'Aapke baare me (sahi normal range ke liye)',age:'Umar',sex:'Ling',clr:'Saaf karein',pick:'Jo laagu ho use dabayein:',more:'Ya apne shabdon me likhein / bolein',mic:'🎤 Bolein',sos:'Emergency?',amb:'108 Ambulance',normal:'Normal',tOK:'Normal',tAb:'Dhyan dein',tCr:'Turant',writing:'Aapka summary likha ja raha hai…',attn:'Dhyan dene layak',within:'Normal range me',share:'📲 WhatsApp par bhejein',copy:'📋 Copy',copied:'Copy ho gaya',th:['Test','Aapki value','Normal range','Result'],lo:'KAM',hi:'ZYADA',nm:'NORMAL',cr:'GAMBHIR'});
 
 /* local names for spoken summary (no model needed) */
 const NM = {hemoglobin:['हीमोग्लोबिन','haemoglobin'],hematocrit:['हेमेटोक्रिट','hematocrit'],wbc:['सफ़ेद रक्त कोशिकाएं','safed blood cells'],platelets:['प्लेटलेट्स','platelets'],glucose_fasting:['खाली पेट शुगर','khali pet sugar'],hba1c:['HbA1c (3 महीने की औसत शुगर)','HbA1c (3 mahine ki average sugar)'],total_cholesterol:['कुल कोलेस्ट्रॉल','total cholesterol'],ldl:['LDL (बुरा कोलेस्ट्रॉल)','LDL (kharab cholesterol)'],hdl:['HDL (अच्छा कोलेस्ट्रॉल)','HDL (achha cholesterol)'],triglycerides:['ट्राइग्लिसराइड','triglyceride'],creatinine:['क्रिएटिनिन (किडनी)','creatinine (kidney)'],bun:['यूरिया नाइट्रोजन','urea nitrogen'],sodium:['सोडियम','sodium'],potassium:['पोटैशियम','potassium'],calcium:['कैल्शियम','calcium'],alt:['SGPT (लिवर)','SGPT (liver)'],ast:['SGOT (लिवर)','SGOT (liver)'],bilirubin_total:['बिलीरुबिन','bilirubin'],tsh:['थायरॉइड TSH','thyroid TSH'],vitamin_d:['विटामिन D','vitamin D'],vitamin_b12:['विटामिन B12','vitamin B12'],ferritin:['फेरिटिन (आयरन भंडार)','ferritin (iron store)'],crp:['CRP (सूजन)','CRP (soojan)']};
@@ -152,8 +167,8 @@ const nm = k => LANG==='English' ? (ENG[k]||k.replace(/_/g,' ')) : NM[k] ? NM[k]
 
 function setLang(l){LANG=l;const u=UI[l];
   document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));
-  for(const k of ['title','sub','set','tab1','tab2','in1','file','paste','go1','demo','priv','out1','empty1','in2','go2','ex','out2','empty2']){const e=$('#t_'+k);if(e)e.textContent=u[k]}
-  $('#disc').textContent=u.disc;document.documentElement.lang=l==='हिन्दी'?'hi':'en';
+  for(const k of ['title','sub','set','tab1','tab2','in1','file','paste','go1','demo','priv','out1','empty1','in2','go2','ex','out2','empty2','s1','s2','s3','about','age','sex','clr','pick','more','mic','sos','amb']){const e=$('#t_'+k);if(e)e.textContent=u[k]}
+  $('#disc').textContent=u.disc;document.documentElement.lang=l==='हिन्दी'?'hi':'en'; if(typeof buildChips==='function')buildChips();
   const r1=$('#out1').dataset.done, r2=$('#out2').dataset.done; if(r1)run1(); if(r2)run2();}
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 
@@ -225,6 +240,11 @@ function showEmergency(flags){const b=$('#emBox');b.innerHTML='<div class="em" r
   b.scrollIntoView({behavior:'smooth',block:'start'}); speak(b.textContent,'em')}
 const clearEmergency=()=>{$('#emBox').innerHTML='';speechSynthesis&&speechSynthesis.cancel()};
 
+/* text size (A- / A+), remembered on this device */
+let FS=100; try{FS=+localStorage.getItem('hia_fs')||100}catch(e){}
+function setFS(v){FS=Math.min(140,Math.max(90,v));document.documentElement.style.fontSize=FS+'%';try{localStorage.setItem('hia_fs',FS)}catch(e){}}
+setFS(FS); $('#fsm').onclick=()=>setFS(FS-10); $('#fsp').onclick=()=>setFS(FS+10);
+
 /* ---------------- audio (browser speech, offline if a voice is installed) ---------------- */
 let SPEECH = {};
 function speak(text, id){
@@ -234,7 +254,7 @@ function speak(text, id){
   if(v)u.voice=v; else toast('No '+L+' voice installed. Add one in your device Settings → Text-to-speech.');
   speechSynthesis.speak(u)}
 function audioBar(id, text){SPEECH[id]=text;
-  return `<div class="btns"><button class="btn s" data-say="${id}">${UI[LANG].listen}</button><button class="btn s" data-stop="1">${UI[LANG].stop}</button></div>`}
+  return `<div class="btns"><button class="btn btn-outline-success" data-say="${id}">${UI[LANG].listen}</button><button class="btn btn-outline-success" data-stop="1">${UI[LANG].stop}</button></div>`}
 document.addEventListener('click',e=>{const s=e.target.closest('[data-say]');if(s)speak(SPEECH[s.dataset.say],s.dataset.say);
   if(e.target.closest('[data-stop]'))speechSynthesis.cancel()});
 
@@ -276,56 +296,92 @@ ${facts}`;
     const j=await r.json(); return (j.message&&j.message.content||'').trim()||null}
   catch(e){toast('Local model failed; showing the built-in summary.');return null}}
 
+/* ---------------- result cards ---------------- */
+function rangeBar(r){const [lo,hi]=r.range, span=Math.max(hi-lo,1e-9), mn=Math.max(0,lo-span*0.6), mx=hi+span*0.6;
+  const pos=x=>Math.min(97,Math.max(3,(x-mn)/(mx-mn)*100));
+  return `<div class="rbar" aria-hidden="true"><i class="zone" style="left:${pos(lo)}%;width:${Math.max(pos(hi)-pos(lo),2)}%"></i><b class="mk ${r.status}" style="left:${pos(r.v)}%"></b></div>`}
+function resRow(r,u,lab){const ic={LOW:'⬇️',HIGH:'⬆️',NORMAL:'✅',CRITICAL_LOW:'🚨',CRITICAL_HIGH:'🚨'}[r.status];
+  return `<div class="res ${r.status}"><div class="rt"><span>${ic} <b>${esc(nm(r.test))}</b></span><span class="pill ${r.status}">${lab[r.status]}</span></div>
+  <div class="rv"><span>${+r.v.toPrecision(5)}</span> <small>${esc(r.unit)}</small> <span class="mute">(${u.normal}: ${+r.range[0].toPrecision(4)}–${+r.range[1].toPrecision(4)})</span></div>${rangeBar(r)}</div>`}
+
+/* share / copy / action bar */
+let SHARE={};
+function actionBar(id,text,shareText){SPEECH[id]=text;SHARE[id]=shareText||text;const u=UI[LANG];
+  return `<div class="btns"><button class="btn btn-outline-success" data-say="${id}">${u.listen}</button><button class="btn btn-outline-success" data-stop="1">${u.stop}</button>
+  <button class="btn btn-outline-success" data-share="${id}">${u.share}</button><button class="btn btn-outline-success" data-copy="${id}">${u.copy}</button></div>`}
+document.addEventListener('click',async e=>{const sh=e.target.closest('[data-share]'),cp=e.target.closest('[data-copy]');
+  if(sh)window.open('https://wa.me/?text='+encodeURIComponent(SHARE[sh.dataset.share]),'_blank','noopener');
+  if(cp){try{await navigator.clipboard.writeText(SHARE[cp.dataset.copy]);toast(UI[LANG].copied)}catch(err){toast('Select the text and copy it')}}});
+
 /* ---------------- run: report ---------------- */
+const emptyHTML=(k)=>`<div class="empty"><span class="big">${k==='1'?'📄':'🤒'}</span>${esc(UI[LANG]['empty'+k])}</div>`;
 async function run1(){
   clearEmergency(); const u=UI[LANG], box=$('#out1'); box.dataset.done='';
   const text=$('#rep').value; AGE=+$('#age').value||0; SEX=$('#sex').value;
-  if(!text.trim()){toast(u.empty1);return}
+  if(!text.trim()){toast(u.empty1);$('#rep').focus();return}
   const a=analyse(text);
-  if(!a.results.length){box.innerHTML=`<div class="empty">${esc(u.noval)}</div>`;return}
+  if(!a.results.length){box.innerHTML=`<div class="empty"><span class="big">🔍</span>${esc(u.noval)}</div>`;return}
   box.dataset.done='1';
   if(a.critical.length)showEmergency(['Critical lab value: '+a.critical.join(', ')]);
   const lab={LOW:u.lo,HIGH:u.hi,NORMAL:u.nm,CRITICAL_LOW:u.cr+' '+u.lo,CRITICAL_HIGH:u.cr+' '+u.hi};
-  let h=`<div class="tw"><table><tr>${u.th.map(x=>`<th>${x}</th>`).join('')}</tr>`+a.results.map(r=>
-    `<tr><td>${esc(nm(r.test))}</td><td>${+r.v.toPrecision(5)} ${esc(r.unit)}</td><td>${+r.range[0].toPrecision(4)} - ${+r.range[1].toPrecision(4)}</td><td><span class="pill ${r.status}">${lab[r.status]}</span></td></tr>`).join('')+'</table></div>';
+  const nOK=a.results.filter(r=>r.status==='NORMAL').length, nCr=a.critical.length, nAb=a.abnormal.length-nCr;
+  const bad=a.results.filter(r=>r.status!=='NORMAL').sort((x,y)=>(y.status.startsWith('CRIT')?1:0)-(x.status.startsWith('CRIT')?1:0)), good=a.results.filter(r=>r.status==='NORMAL');
+  let h=`<div class="tiles"><div class="tile ok"><b>${nOK}</b><span>${u.tOK}</span></div><div class="tile warn"><b>${nAb}</b><span>${u.tAb}</span></div><div class="tile bad"><b>${nCr}</b><span>${u.tCr}</span></div></div>`;
+  if(bad.length)h+=`<h3>${u.attn}</h3>`+bad.map(r=>resRow(r,u,lab)).join('');
+  if(good.length)h+=`<details ${bad.length?'':'open'}><summary>✅ ${u.within} (${good.length})</summary>${good.map(r=>resRow(r,u,lab)).join('')}</details>`;
   if(a.eg)h+=`<p class="mute">${u.egfr}: ${a.eg.e} (${a.eg.s})</p>`;
   const notes=a.results.filter(r=>r.note).map(r=>`${esc(r.raw)}: ${esc(r.note)}`); if(notes.length)h+=`<p class="mute">${u.conv}: ${notes.join('; ')}</p>`;
   if(a.results.some(r=>r.assumed))h+=`<p class="mute">${u.assumed}</p>`;
-  box.innerHTML=h+`<h3>${u.simple}</h3><div class="say" id="sumBox">…</div>`;
+  box.innerHTML=h+`<h3>${u.simple}</h3><div class="say" id="sumBox"><span class="spin"></span>${u.writing}</div>`;
+  box.scrollIntoView({behavior:'smooth',block:'start'});
   const entries=labGuidance(a.abnormal);
   const facts='Abnormal results: '+(a.abnormal.map(([k,d])=>`${k.replace(/_/g,' ')} is ${d}`).join('; ')||'none')+'\n'+entries.map(g=>`${g.title}: food: ${g.food.join('; ')}. Movement: ${g.yoga.join('; ')}. Doctor: ${g.doctor}`).join('\n');
   const summ=(await llm('lab report',facts))||builtinSummary(a);
   if(!$('#sumBox'))return; $('#sumBox').textContent=summ;
-  let tail=audioBar('rep',summ);
+  const share='🩺 HIA report summary\n'+bad.map(r=>`• ${nm(r.test)}: ${+r.v.toPrecision(5)} ${r.unit} (${lab[r.status]})`).join('\n')+'\n\n'+summ+'\n\n'+UI[LANG].disc;
+  let tail=actionBar('rep',summ,share);
   if(entries.length)tail+=`<h3>${u.doNow}</h3>`+entries.map(g=>guideBlock(g,'lab')).join('')+`<p class="mute">${u.ayushnote}</p>`;
-  tail+=`<div class="btns"><button class="btn s" onclick="window.print()">${u.print}</button></div>`;
+  tail+=`<div class="btns"><button class="btn btn-outline-success" onclick="window.print()">${u.print}</button></div>`;
   $('#sumBox').insertAdjacentHTML('afterend',tail);
 }
+
+/* ---------------- symptom chips + voice ---------------- */
+const CHIP={acidity:['🔥','Acidity / gas','एसिडिटी / गैस'],cold_cough:['🤧','Cold / cough','सर्दी-खांसी'],fever:['🌡️','Fever','बुखार'],loose_motion:['🚽','Loose motions','दस्त'],headache:['🤕','Headache','सिरदर्द'],back_pain:['🦴','Body / back pain','दर्द (कमर/जोड़)'],constipation:['😣','Constipation','कब्ज'],stress_sleep:['😴','Stress / sleep','तनाव / नींद']};
+const SEL=new Set();
+function buildChips(){const c=$('#chips'); if(!c)return;
+  c.innerHTML=D.SYMKEYS.map(k=>{const x=CHIP[k]||['🩺',k,k];return `<button type="button" class="chip" data-chip="${k}" aria-pressed="${SEL.has(k)}">${x[0]} ${esc(LANG==='English'?x[1]:x[2])}</button>`}).join('')}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-chip]');if(!c)return;const k=c.dataset.chip;SEL.has(k)?SEL.delete(k):SEL.add(k);c.setAttribute('aria-pressed',SEL.has(k))});
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){$('#mic').hidden=false;$('#mic').onclick=()=>{const r=new SR();r.lang=LANG==='English'?'en-IN':'hi-IN';r.interimResults=false;
+  r.onresult=e=>{const t=e.results[0][0].transcript;$('#sym').value=($('#sym').value?$('#sym').value+' ':'')+t};
+  r.onerror=()=>toast('Could not hear you. Please try again or type.');r.onend=()=>$('#mic').classList.remove('rec');
+  $('#mic').classList.add('rec');try{r.start()}catch(err){}}}
 
 /* ---------------- run: symptoms ---------------- */
 async function run2(){
   clearEmergency(); const u=UI[LANG], box=$('#out2'); box.dataset.done='';
-  const text=$('#sym').value; if(!text.trim()){toast(u.empty2);return}
+  const text=$('#sym').value; if(!text.trim()&&!SEL.size){toast(u.pick);return}
   const flags=redFlags(text); if(flags.length){showEmergency(flags);box.innerHTML='';return}   // fixed message, no model
   box.dataset.done='1';
-  const keys=D.SYMKEYS.filter(k=>D.SYM[k].keywords.some(kw=>text.toLowerCase().includes(kw)));
-  if(!keys.length){box.innerHTML=`<p>${esc(u.nomatch)}</p><p class="mute">${esc(u.worse)}</p>`;return}
+  const keys=D.SYMKEYS.filter(k=>SEL.has(k)||D.SYM[k].keywords.some(kw=>text.toLowerCase().includes(kw)));
+  if(!keys.length){box.innerHTML=`<div class="empty"><span class="big">🩺</span>${esc(u.nomatch)}</div><p class="mute">${esc(u.worse)}</p>`;return}
   const gs=keys.map(k=>D.SYM[k]); let h='';
   const facts=gs.map(g=>`${g.title}: precautions ${g.precautions.join('; ')}. Food: ${g.food.join('; ')}. Movement: ${g.yoga.join('; ')}. See a doctor if: ${g.see_doctor}`).join('\n');
-  box.innerHTML=`<div class="say" id="symBox">…</div>`;
+  box.innerHTML=`<div class="say" id="symBox"><span class="spin"></span>${u.writing}</div>`; box.scrollIntoView({behavior:'smooth',block:'start'});
   const summ=await llm('health problem and self-care advice',facts);
   if(!$('#symBox'))return;
   const eng=gs.map(g=>`${g.title}. ${g.precautions[0]||''} ${g.food[0]||''} See a doctor if: ${g.see_doctor}`).join(' ');
-  if(summ){$('#symBox').textContent=summ;h+=audioBar('sym',summ)}
-  else{$('#symBox').textContent=gs.map(g=>g.title).join(' · ');h+=(LANG!=='English'?`<p class="mute">Connect a local model (Settings) for a ${LANG} summary. The checked guidance below is in English.</p>`:'')+audioBar('sym',eng)}
+  if(summ){$('#symBox').textContent=summ;h+=actionBar('sym',summ,'🩺 HIA advice\n'+summ+'\n\n'+u.disc)}
+  else{$('#symBox').textContent=gs.map(g=>g.title).join(' · ');h+=(LANG!=='English'?`<p class="mute">Connect a local model (Settings) for a ${LANG} summary. The checked guidance below is in English.</p>`:'')+actionBar('sym',eng,'🩺 HIA advice\n'+eng+'\n\n'+u.disc)}
   h+=`<h3>${u.doNow}</h3>`+gs.map(g=>guideBlock(g,'sym')).join('')+`<p class="mute">${u.worse}</p><p class="mute">${u.ayushnote}</p>`;
   $('#symBox').insertAdjacentHTML('afterend',h);
 }
 
 /* ---------------- wiring ---------------- */
+$('#clr').onclick=()=>{$('#rep').value='';$('#out1').dataset.done='';$('#out1').innerHTML=emptyHTML('1');clearEmergency();$('#file').value=''};
 $('#go1').onclick=run1; $('#go2').onclick=run2;
 $('#demo').onclick=()=>{$('#rep').value=D.SAMPLE;$('#age').value=40;$('#sex').value='female';toast('Sample loaded')};
-function tab(n){$('#p1').hidden=n!==1;$('#p2').hidden=n!==2;$('#tab1').setAttribute('aria-selected',n===1);$('#tab2').setAttribute('aria-selected',n===2);clearEmergency()}
+function tab(n){$('#p1').hidden=n!==1;$('#p2').hidden=n!==2;$('#tab1').setAttribute('aria-selected',n===1);$('#tab2').setAttribute('aria-selected',n===2);$('#tab1').classList.toggle('active',n===1);$('#tab2').classList.toggle('active',n===2);clearEmergency()}
 $('#tab1').onclick=()=>tab(1);$('#tab2').onclick=()=>tab(2);
 $('#conn').onclick=()=>connect(false);$('#model').onchange=e=>MODEL=e.target.value;
 $('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;let t='';
@@ -337,7 +393,7 @@ $('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;let t='';
       } else t=await f.text();
     $('#rep').value=($('#rep').value?$('#rep').value+'\n':'')+t; toast('File added')}catch(err){toast('Could not read that file. Please paste the text.')}};
 if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
-setLang('English'); connect(true);
+setLang('English'); buildChips(); connect(true);
 </script>
 </body>
 </html>
